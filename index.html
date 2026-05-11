@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BioExplorer</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230d1117'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='58'%3E🦋%3C/text%3E%3C/svg%3E">
 <meta name="description" content="Explorador taxonómico de biodiversidad">
 <meta name="theme-color" content="#0d1117">
 <meta name="mobile-web-app-capable" content="yes">
@@ -39,21 +38,6 @@ body::before {
     linear-gradient(rgba(126,231,135,0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(126,231,135,0.025) 1px, transparent 1px);
   background-size: 48px 48px; pointer-events: none; z-index: 0;
-}
-
-/* BACK BUTTON — mobile only */
-.back-btn {
-  display: none;
-  width: 34px; height: 34px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--surface2);
-  color: var(--text); cursor: pointer; font-size: 1.1rem;
-  align-items: center; justify-content: center;
-  flex-shrink: 0; transition: all 0.2s;
-}
-.back-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-/* Only show on mobile when there's navigation history */
-@media (max-width: 768px) {
-  .back-btn.visible { display: flex; }
 }
 
 /* HEADER */
@@ -157,47 +141,44 @@ main { max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px; position: rel
 
 /* HOME: KINGDOM GRID */
 .kingdom-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: repeat(3, 1fr);
-  gap: 14px;
+  display: flex; gap: 12px;
   animation: fadeUp 0.3s ease both;
+  overflow-x: auto; padding-bottom: 4px;
+  scrollbar-width: none;
 }
-/* Animalia col 1, spans all 3 rows */
-.kingdom-card:nth-child(1) { grid-column: 1; grid-row: 1 / 4; }
-/* Plantae col 2, spans all 3 rows */
-.kingdom-card:nth-child(2) { grid-column: 2; grid-row: 1 / 4; }
-/* Fungi, Chromista, Protozoa: col 3, one row each */
-.kingdom-card:nth-child(3) { grid-column: 3; grid-row: 1; }
-.kingdom-card:nth-child(4) { grid-column: 3; grid-row: 2; }
-.kingdom-card:nth-child(5) { grid-column: 3; grid-row: 3; }
+.kingdom-grid::-webkit-scrollbar { display: none; }
 
 .kingdom-card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 16px; cursor: pointer;
   transition: all 0.22s; overflow: hidden; position: relative;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: row; align-items: center;
+  flex: 1; min-width: 160px; gap: 0;
+  text-decoration: none;
 }
-.kingdom-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.5); }
+.kingdom-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,0.45); }
 
 .kingdom-icon-wrap {
-  flex: 1; min-height: 90px;
+  flex-shrink: 0; width: 72px; height: 72px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 3rem; background: var(--surface2);
+  font-size: 2.2rem;
+  background: var(--surface2);
+  border-right: 1px solid var(--border);
   transition: background 0.22s;
 }
 .kingdom-card:hover .kingdom-icon-wrap { background: rgba(126,231,135,0.06); }
 
 .kingdom-img-wrap {
-  flex: 1; min-height: 90px;
+  flex-shrink: 0; width: 72px; height: 72px;
   overflow: hidden; background: var(--surface2);
+  border-right: 1px solid var(--border);
 }
 .kingdom-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-.kingdom-card:hover .kingdom-img { transform: scale(1.06); }
+.kingdom-card:hover .kingdom-img { transform: scale(1.1); }
 
 .kingdom-body {
-  padding: 12px 14px 14px; display: flex; flex-direction: column;
-  gap: 3px; border-top: 1px solid var(--border);
+  padding: 12px 16px; display: flex; flex-direction: column;
+  gap: 3px; flex: 1; min-width: 0;
 }
 .kingdom-badge {
   font-family: 'DM Mono', monospace; font-size: 0.52rem;
@@ -205,69 +186,20 @@ main { max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px; position: rel
 }
 .kingdom-name {
   font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: 1.1rem; font-weight: 700; line-height: 1.1;
+  font-size: 1.05rem; font-weight: 700; line-height: 1.1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.kingdom-common { font-size: 0.7rem; color: var(--muted); }
+.kingdom-common { font-size: 0.7rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .kingdom-hint { font-size: 0.6rem; color: var(--dim); font-family: 'DM Mono', monospace; margin-top: 2px; }
 .kingdom-arrow {
-  position: absolute; top: 10px; right: 10px;
-  background: rgba(0,0,0,0.45); color: white;
-  border-radius: 50%; width: 26px; height: 26px;
+  flex-shrink: 0; margin-right: 12px;
+  background: var(--surface2); color: var(--dim);
+  border-radius: 50%; width: 24px; height: 24px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.82rem; backdrop-filter: blur(4px);
-  transition: all 0.22s;
+  font-size: 0.8rem; transition: all 0.22s;
+  border: 1px solid var(--border);
 }
-.kingdom-card:hover .kingdom-arrow { background: var(--accent); color: #0d1117; }
-
-/* ALL SPECIES BUTTON */
-.all-species-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; border-radius: 8px;
-  border: 1px solid var(--accent); color: var(--accent);
-  background: rgba(126,231,135,0.06);
-  font-family: 'DM Mono', monospace; font-size: 0.72rem;
-  cursor: pointer; transition: all 0.2s; white-space: nowrap;
-  flex-shrink: 0;
-}
-.all-species-btn:hover { background: rgba(126,231,135,0.14); transform: translateY(-1px); }
-.all-species-btn .btn-icon { font-size: 0.9rem; }
-
-/* ALL SPECIES OVERLAY */
-.sp-overlay {
-  position: fixed; inset: 0; z-index: 500;
-  background: var(--bg); display: flex; flex-direction: column;
-  opacity: 0; pointer-events: none; transition: opacity 0.22s;
-}
-.sp-overlay.open { opacity: 1; pointer-events: all; }
-.sp-overlay-header {
-  position: sticky; top: 0; z-index: 10;
-  background: rgba(13,17,23,0.97); backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 40px; height: 58px;
-  display: flex; align-items: center; gap: 16px;
-}
-.sp-overlay-title {
-  font-family: 'Playfair Display', serif; font-style: italic;
-  font-size: 1.1rem; font-weight: 700; flex: 1; min-width: 0;
-}
-.sp-overlay-meta {
-  font-family: 'DM Mono', monospace; font-size: 0.65rem;
-  color: var(--muted); flex-shrink: 0;
-}
-.sp-overlay-close {
-  width: 32px; height: 32px; border-radius: 6px;
-  border: 1px solid var(--border); background: var(--surface2);
-  color: var(--muted); cursor: pointer; font-size: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; flex-shrink: 0;
-}
-.sp-overlay-close:hover { border-color: var(--accent3); color: var(--accent3); }
-.sp-overlay-body { flex: 1; overflow-y: auto; padding: 28px 40px 60px; }
-.sp-overlay-loading {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; height: 300px; gap: 14px;
-  font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--muted);
-}
+.kingdom-card:hover .kingdom-arrow { background: var(--accent); color: #0d1117; border-color: var(--accent); }
 
 /* LOADING */
 .loading { text-align: center; padding: 100px 20px; }
@@ -742,170 +674,105 @@ main { max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px; position: rel
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-
-  /* ── Header ── */
   header { padding: 0 12px; }
-  .header-inner { height: 54px; gap: 6px; }
+  .header-inner { height: 54px; gap: 8px; }
   .logo { font-size: 1rem; }
   .src-badge { display: none; }
-  /* Hide "by @..." credits on mobile */
-  .header-inner > span:last-child { display: none; }
-  /* Shrink auth button to icon only */
-  .auth-btn { padding: 5px 8px; }
-  .auth-label { display: none; }
-  /* Shrink my-species btn */
-  .my-species-btn { padding: 5px 8px; gap: 4px; }
-
-  /* ── Filter bar ── */
-  .filter-bar { padding: 0 12px; top: 54px; }
-  .filter-inner { height: 48px; gap: 6px; }
-  .filter-label { display: none; }
-  .filter-divider { display: none; }
-  .search-wrap { flex: 1; max-width: none; }
-  .search-input { font-size: 16px; padding: 6px 26px 6px 28px; }
-  .place-wrap { flex: 1; max-width: none; overflow: visible; }
+  .search-wrap { max-width: none; flex: 1; }
+  .search-input { font-size: 16px; }
   .place-input { font-size: 16px; }
-
-  /* Dropdowns: full-width fixed below both bars (54+48=102px) */
   .search-dropdown {
-    position: fixed; top: 102px; left: 0; right: 0;
-    border-radius: 0 0 14px 14px; max-height: 58vh;
-    overflow-y: auto; z-index: 500; min-width: unset;
+    position: fixed; top: 106px; left: 0; right: 0;
+    border-radius: 0 0 12px 12px; max-height: 60vh; overflow-y: auto; z-index: 500;
+    min-width: unset;
   }
-  .place-dropdown {
-    position: fixed; left: 0; right: 0; top: 102px;
-    border-radius: 0 0 14px 14px; max-height: 72vh;
-    overflow-y: auto; z-index: 300;
-  }
-  .search-result { padding: 12px 16px; gap: 12px; }
-  .sr-photo, .sr-no-photo { width: 44px; height: 44px; border-radius: 8px; }
-  .sr-name { font-size: 0.95rem; }
-  .sr-common { font-size: 0.78rem; }
-  .place-result { padding: 12px 16px; font-size: 0.88rem; }
-  .place-preview { height: 200px; }
-  #placePreviewMap { height: 200px; }
-
-  /* ── Breadcrumb ── */
-  .breadcrumb { font-size: 0.7rem; gap: 2px; flex: 1; min-width: 0; }
-  .crumb { padding: 2px 4px; max-width: 80px; overflow: hidden; text-overflow: ellipsis; }
-
-  /* ── Main content ── */
-  main { padding: 16px 12px 80px; }
-
-  /* ── Level header ── */
-  .level-header {
-    margin-bottom: 16px; gap: 8px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    align-items: start;
-  }
-  .level-header > div:first-child { grid-column: 1; grid-row: 1; }
-  .level-header .all-species-btn { grid-column: 2; grid-row: 1; align-self: center; }
-  .level-header .level-sub { grid-column: 1 / -1; grid-row: 2; margin-left: 0; font-size: 0.72rem; }
-  .level-title { font-size: 1.45rem; }
-
-  /* Hide "Ver todas las especies" text label, keep icon */
-  .all-species-btn .btn-label { display: none; }
-  .all-species-btn { padding: 6px 10px; }
-
-  /* ── Taxon card grid ── */
-  .card-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .search-result { padding: 12px 16px; gap: 14px; }
+  .sr-photo, .sr-no-photo { width: 48px; height: 48px; border-radius: 8px; }
+  .sr-name { font-size: 1rem; }
+  .sr-common { font-size: 0.8rem; }
+  .breadcrumb { font-size: 0.72rem; gap: 2px; }
+  .crumb { padding: 2px 5px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; }
+  main { padding: 20px 16px 80px; }
+  .level-header { margin-bottom: 20px; gap: 8px; }
+  .level-title { font-size: 1.6rem; }
+  .level-sub { font-size: 0.75rem; width: 100%; margin-left: 0; }
+  .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .taxon-card { border-radius: 10px; }
-  .tc-img-wrap { aspect-ratio: 4/3; }
-  .tc-body { padding: 8px 10px 10px; gap: 3px; }
-  .tc-name { font-size: 0.88rem; }
-  .tc-common { font-size: 0.66rem; }
-  .tc-arrow { width: 22px; height: 22px; font-size: 0.78rem; top: 7px; right: 7px; }
-
-  /* ── Kingdom row ── */
-  .kingdom-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; gap: 8px; }
-  .kingdom-card:nth-child(1) { grid-column: 1; grid-row: 1; }
-  .kingdom-card:nth-child(2) { grid-column: 2; grid-row: 1; }
-  .kingdom-card:nth-child(3) { grid-column: 1; grid-row: 2; }
-  .kingdom-card:nth-child(4) { grid-column: 2; grid-row: 2; }
-  .kingdom-card:nth-child(5) { grid-column: 1 / 3; grid-row: 3; }
-  .kingdom-icon-wrap { min-height: 70px; font-size: 2.2rem; }
-  .kingdom-img-wrap { min-height: 70px; }
-  .kingdom-body { padding: 8px 10px 10px; }
-  .kingdom-name { font-size: 0.92rem; }
+  .tc-body { padding: 10px 12px 12px; }
+  .tc-name { font-size: 0.92rem; }
+  .tc-common { font-size: 0.68rem; }
+  .kingdom-grid { gap: 8px; }
+  .kingdom-card { min-width: 140px; }
+  .kingdom-icon-wrap { width: 56px; height: 56px; font-size: 1.7rem; }
+  .kingdom-img-wrap { width: 56px; height: 56px; }
+  .kingdom-body { padding: 10px 12px; }
+  .kingdom-name { font-size: 0.9rem; }
   .kingdom-common { display: none; }
   .kingdom-hint { display: none; }
-  .kingdom-arrow { width: 22px; height: 22px; font-size: 0.72rem; }
-
-  /* ── Species grid ── */
-  .species-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .sp-info { padding: 7px 9px 9px; }
-  .sp-sci { font-size: 0.8rem; }
-  .sp-common { font-size: 0.68rem; }
-  .sp-obs { font-size: 0.6rem; }
-
-  /* Map/phenology buttons: bigger touch targets */
-  .map-btn { width: 34px; height: 34px; bottom: 6px; left: 6px; font-size: 0.9rem; }
-  .phenology-btn { width: 34px; height: 34px; bottom: 6px; left: 48px; font-size: 0.9rem; }
-
-  /* ── Popovers: full-width sheet at bottom on mobile ── */
-  .map-popover, .phenology-popover {
-    position: fixed !important;
-    left: 8px !important; right: 8px !important;
-    bottom: 12px !important; top: auto !important;
-    width: auto !important;
-    border-radius: 16px;
-    transform: none !important;
-    max-height: 70vh; overflow-y: auto;
-  }
-  .map-popover.visible, .phenology-popover.visible {
-    transform: none !important;
-  }
-  .map-popover-map { width: 100% !important; height: 220px; }
-
-  /* ── Modal: bottom sheet ── */
+  .kingdom-arrow { display: none; }
+  .species-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sp-info { padding: 8px 10px; }
   .modal-overlay { padding: 0; align-items: flex-end; }
-  .modal {
-    max-width: 100%; max-height: 94vh;
-    border-radius: 20px 20px 0 0; border-bottom: none;
-    transform: translateY(24px);
-  }
+  .modal { max-width: 100%; max-height: 92vh; border-radius: 20px 20px 0 0; border-bottom: none; transform: translateY(20px); }
   .modal-overlay.open .modal { transform: translateY(0); }
   .modal-handle { display: block; }
-  .modal-body { padding: 18px 14px 36px; }
-  .modal-sci { font-size: 1.3rem; line-height: 1.2; }
-  .modal-common { font-size: 0.85rem; margin-bottom: 14px; }
-  .modal-stats { padding: 12px; gap: 16px; margin-bottom: 14px; }
-  .ms-val { font-size: 1.1rem; }
-  .modal-links { gap: 8px; }
-  .modal-link { padding: 8px 12px; font-size: 0.74rem; }
-  .modal-close { top: 10px; right: 10px; width: 30px; height: 30px; font-size: 0.9rem; }
-  #speciesMap, .map-loading { height: 200px; }
-  .map-section { margin-top: 18px; }
-
-  /* ── All species overlay ── */
-  .sp-overlay-header { padding: 0 14px; height: 52px; gap: 10px; }
-  .sp-overlay-title { font-size: 1rem; }
-  .sp-overlay-meta { font-size: 0.6rem; }
-  .sp-overlay-body { padding: 12px 12px 60px; }
-
-  /* ── Loading ── */
-  .loading { padding: 50px 16px; }
+  .modal-body { padding: 20px 16px 32px; }
+  .modal-sci { font-size: 1.4rem; }
+  .modal-close { top: 12px; right: 12px; }
+  #speciesMap, .map-loading { height: 220px; }
+  .filter-bar { padding: 0 12px; top: 54px; }
+  .filter-inner { height: 52px; gap: 6px; }
+  .filter-label { display: none; }
+  .filter-divider { display: none; }
+  .place-wrap { max-width: none; flex: 1; overflow: visible; }
+  .place-dropdown { position: fixed; left: 0; right: 0; top: 106px; border-radius: 0 0 12px 12px; max-height: 75vh; overflow-y: auto; z-index: 300; }
+  .place-result { padding: 12px 16px; font-size: 0.9rem; }
+  .place-preview { height: 220px; }
+  #placePreviewMap { height: 220px; }
+  .loading { padding: 60px 20px; }
 }
 
 @media (max-width: 380px) {
-  .card-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
-  .species-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
-  .kingdom-card { min-width: 110px; }
-  .kingdom-icon-wrap { min-height: 55px; font-size: 1.8rem; }
-  .kingdom-img-wrap { min-height: 55px; }
-  .kingdom-name { font-size: 0.8rem; }
-  .header-inner { gap: 4px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .species-grid { grid-template-columns: 1fr 1fr; }
+  .kingdom-card { min-width: 120px; }
+  .kingdom-icon-wrap { width: 48px; height: 48px; font-size: 1.4rem; }
+  .kingdom-img-wrap { width: 48px; height: 48px; }
+  .kingdom-name { font-size: 0.82rem; }
 }
+
+/* ALL SPECIES BUTTON */
+.all-species-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--accent); color: var(--accent);
+  background: rgba(126,231,135,0.06);
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.all-species-btn:hover { background: rgba(126,231,135,0.14); transform: translateY(-1px); }
+.all-species-btn .btn-icon { font-size: 0.9rem; }
+@media (max-width: 768px) { .all-species-btn .btn-label { display: none; } .all-species-btn { padding: 6px 10px; } }
+
+/* PDF EXPORT BUTTON */
+.pdf-export-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px;
+  border: 1px solid var(--accent2); color: var(--accent2);
+  background: rgba(88,166,255,0.06);
+  font-family: 'DM Mono', monospace; font-size: 0.72rem;
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.pdf-export-btn:hover { background: rgba(88,166,255,0.14); transform: translateY(-1px); }
+.pdf-export-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+@media (max-width: 768px) { .pdf-export-btn .pdf-label { display: none; } }
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <button class="back-btn" id="backBtn" aria-label="Volver">←</button>
-    <div class="logo" style="cursor:pointer;display:flex;align-items:center;gap:7px" id="logoBtn"><span style="font-size:1.4rem;line-height:1">🦋</span><span>Bio<em>Explorer</em></span></div>
+    <div class="logo" style="cursor:pointer" id="logoBtn">Bio<em>Explorer</em></div>
     <nav class="breadcrumb" id="breadcrumb"></nav>
     <span class="src-badge">● iNaturalist</span>
     <button class="my-species-btn" id="mySpeciesBtn">
@@ -980,20 +847,23 @@ main { max-width: 1400px; margin: 0 auto; padding: 40px 40px 80px; position: rel
   </div>
 </div>
 
-<!-- ALL SPECIES OVERLAY -->
-<div class="sp-overlay" id="spOverlay">
-  <div class="sp-overlay-header">
-    <div>
+
+<div class="sp-overlay" id="spOverlay" style="position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity 0.22s;">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;height:58px;display:flex;align-items:center;gap:16px;">
+    <div style="flex:1;min-width:0;">
       <div style="font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:2px" id="spOverlayRank"></div>
-      <div class="sp-overlay-title" id="spOverlayTitle"></div>
+      <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;font-weight:700" id="spOverlayTitle"></div>
     </div>
-    <div class="sp-overlay-meta" id="spOverlayMeta"></div>
-    <button class="sp-overlay-close" id="spOverlayClose">✕</button>
+    <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);flex-shrink:0" id="spOverlayMeta"></div>
+    <button class="pdf-export-btn" id="spPdfBtn" title="Exportar PDF">📄 <span class="pdf-label">PDF</span></button>
+    <button id="spOverlayClose" style="width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;">✕</button>
   </div>
-  <div class="sp-overlay-body" id="spOverlayBody"></div>
+  <div id="spOverlayBody" style="flex:1;overflow-y:auto;padding:28px 40px 60px;"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────
 
@@ -1074,16 +944,7 @@ function repaint() {
 
 function renderBreadcrumb() {
   const bc = document.getElementById('breadcrumb');
-  const backBtn = document.getElementById('backBtn');
-
-  if (!navStack.length) {
-    bc.innerHTML = '';
-    backBtn.classList.remove('visible');
-    return;
-  }
-
-  backBtn.classList.add('visible');
-
+  if (!navStack.length) { bc.innerHTML = ''; return; }
   let html = `<span class="crumb" data-nav="-1">Inicio</span>`;
   navStack.forEach((item, i) => {
     html += `<span class="crumb-sep">/</span>`;
@@ -1099,12 +960,6 @@ function renderBreadcrumb() {
 }
 
 window.addEventListener('popstate', () => {
-  // Close overlays first, in priority order
-  if (spOverlay.classList.contains('open')) {
-    closeAllSpeciesOverlay();
-    history.pushState({ depth: navStack.length }, '', '');
-    return;
-  }
   if (document.getElementById('modalOverlay').classList.contains('open')) {
     closeModal();
     history.pushState({ depth: navStack.length }, '', '');
@@ -1132,7 +987,7 @@ async function fetchChildren(parentId, rank) {
     const r = await fetch(url);
     if (!r.ok) break;
     const data = await r.json();
-    const results = (data.results || []).filter(t => !isExtinct(t));
+    const results = data.results || [];
     all = all.concat(results);
     if (results.length < 500) break;
     if (page >= 10) break;
@@ -1145,9 +1000,7 @@ async function fetchChildren(parentId, rank) {
 async function fetchSpeciesGlobal(parentId) {
   const url = `${API}/taxa?taxon_id=${parentId}&rank=species&per_page=100&order_by=observations_count&locale=es`;
   const r = await fetch(url);
-  return ((await r.json()).results || [])
-    .filter(t => !isExtinct(t))
-    .map(spToObj);
+  return ((await r.json()).results || []).map(spToObj);
 }
 
 function spToObj(sp) {
@@ -1160,12 +1013,6 @@ function spToObj(sp) {
     wikipedia: sp.wikipedia_url || null,
     ancestor_ids: sp.ancestor_ids || [],
   };
-}
-
-function isExtinct(taxon) {
-  const status = taxon.conservation_status?.status?.toUpperCase() ||
-                 taxon.conservation_statuses?.[0]?.status?.toUpperCase() || '';
-  return status === 'EX' || status === 'EW';
 }
 
 async function fetchSpeciesInPlace(parentId, placeId) {
@@ -1382,18 +1229,10 @@ function showSpecies(parent, species) {
         <div class="level-rank">${parentRankEs}</div>
         <div class="level-title">${parent.name}</div>
       </div>
-      <button class="all-species-btn" id="allSpeciesBtnSp">
-        <span class="btn-icon">🌿</span>
-        <span class="btn-label">Ver todas las especies</span>
-      </button>
       <div class="level-sub">${sorted.length} especies</div>
     </div>
     <div class="species-grid" id="grid"></div>
   `;
-
-  document.getElementById('allSpeciesBtnSp').addEventListener('click', () => {
-    openAllSpeciesOverlay(parent.id, parent.name, parent.rank);
-  });
   const grid = document.getElementById('grid');
   sorted.forEach(sp => {
     const card = document.createElement('div');
@@ -1441,9 +1280,6 @@ const popoverBody   = document.getElementById('mapPopoverBody');
 const popoverFooter = document.getElementById('mapPopoverFooter');
 
 function positionPopover(triggerEl) {
-  // On mobile: always show as bottom sheet (CSS handles position via !important)
-  if (window.innerWidth <= 768) return;
-
   const rect = triggerEl.getBoundingClientRect();
   const pw = 300, ph = 260;
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -1465,23 +1301,11 @@ const gbifKeyCache = {};
 async function getGbifKey(name) {
   if (gbifKeyCache[name] !== undefined) return gbifKeyCache[name];
   try {
-    // Try exact match first
-    const r = await fetch(`https://api.gbif.org/v1/species/match?name=${encodeURIComponent(name)}&rank=SPECIES&strict=false&verbose=false`);
+    const r = await fetch(`https://api.gbif.org/v1/species/match?name=${encodeURIComponent(name)}&verbose=false`);
     const d = await r.json();
-    if (d.matchType !== 'NONE' && d.usageKey) {
-      gbifKeyCache[name] = d.usageKey;
-      return d.usageKey;
-    }
-    // Fallback: search by name
-    const r2 = await fetch(`https://api.gbif.org/v1/species/search?q=${encodeURIComponent(name)}&rank=SPECIES&limit=1&status=ACCEPTED`);
-    const d2 = await r2.json();
-    const key = d2.results?.[0]?.key || null;
-    gbifKeyCache[name] = key;
-    return key;
-  } catch(e) {
-    gbifKeyCache[name] = null;
-    return null;
-  }
+    gbifKeyCache[name] = (d.matchType !== 'NONE' && d.usageKey) ? d.usageKey : null;
+  } catch(e) { gbifKeyCache[name] = null; }
+  return gbifKeyCache[name];
 }
 
 async function openMapPopover(sp, triggerEl) {
@@ -1536,17 +1360,13 @@ async function openMapPopover(sp, triggerEl) {
   ).addTo(popoverMap);
 
   // 3. GBIF tile — added once key resolves
-  popoverFooter.innerHTML = '<span style="color:#2d9e45;font-weight:700">● iNat</span> &nbsp; <span style="color:var(--dim)">cargando GBIF…</span>';
   gbifKeyPromise.then(gbifKey => {
-    if (!gbifKey || !popoverMap) {
-      popoverFooter.innerHTML = '<span style="color:#2d9e45;font-weight:700">● iNat</span> &nbsp; <span style="color:var(--dim)">GBIF sin datos</span>';
-      return;
-    }
+    if (!gbifKey || !popoverMap) return;
     L.tileLayer(
-      `https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.png?taxonKey=${gbifKey}&style=orangeHeat.point&srs=EPSG:3857`,
-      { maxZoom: 19, opacity: 0.8 }
+      `https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}@1x.png?taxonKey=${gbifKey}&style=classic.point`,
+      { maxZoom: 19, opacity: 0.5 }
     ).addTo(popoverMap);
-    popoverFooter.innerHTML = '<span style="color:#2d9e45;font-weight:700">● iNat</span> &nbsp; <span style="color:#e8642c;font-weight:700">● GBIF</span> &nbsp; <span style="color:var(--dim)">todas las observaciones</span>';
+    popoverFooter.textContent = 'iNaturalist + GBIF · todas las observaciones';
   });
 
   // 4. Labels on top
@@ -1554,10 +1374,8 @@ async function openMapPopover(sp, triggerEl) {
     subdomains: 'abcd', maxZoom: 19, opacity: 0.8
   }).addTo(popoverMap);
 
-  setTimeout(() => {
-    popoverMap?.invalidateSize();
-    fitMapToBbox(popoverMap, sp.id);
-  }, window.innerWidth <= 768 ? 150 : 30);
+  popoverFooter.textContent = 'iNaturalist · todas las observaciones';
+  setTimeout(() => popoverMap?.invalidateSize(), 30);
 }
 
 function closeMapPopover() {
@@ -1587,9 +1405,6 @@ const MONTHS = ['E','F','M','A','M','J','J','A','S','O','N','D'];
 const MONTH_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 function positionPhenologyPopover(triggerEl) {
-  // On mobile: CSS handles it as a bottom sheet
-  if (window.innerWidth <= 768) return;
-
   const rect = triggerEl.getBoundingClientRect();
   const pw = 320, ph = 180;
   const vw = window.innerWidth, vh = window.innerHeight;
@@ -1624,7 +1439,7 @@ async function fetchPhenologyData(sp) {
   const gbifPromise = activePlaceId ? Promise.resolve(Array(12).fill(0)) :
     getGbifKey(sp.name).then(key => {
       if (!key) return Array(12).fill(0);
-      return fetch(`https://api.gbif.org/v1/occurrence/search?taxonKey=${key}&facet=month&facetLimit=12&limit=0`)
+      return fetch(`https://api.gbif.org/v1/occurrence/search?taxonKey=${key}&basisOfRecord=HUMAN_OBSERVATION&basisOfRecord=MACHINE_OBSERVATION&facet=month&facetLimit=12&limit=0`)
         .then(r => r.ok ? r.json() : null)
         .then(d => {
           const arr = Array(12).fill(0);
@@ -1733,15 +1548,13 @@ function closePhenologyPopover() {
 }
 
 document.addEventListener('click', e => {
-  // Don't close if click is inside the modal (phenology rendered inline there)
-  if (document.getElementById('modalOverlay')?.contains(e.target)) return;
   if (!phenologyPopover.contains(e.target) && !e.target.classList.contains('phenology-btn')) {
     closePhenologyPopover();
   }
 }, true);
 
+
 document.addEventListener('click', e => {
-  if (document.getElementById('modalOverlay')?.contains(e.target)) return;
   if (!popover.contains(e.target) && !e.target.classList.contains('map-btn')) {
     closeMapPopover();
   }
@@ -1803,17 +1616,8 @@ function openModal(sp) {
       <div class="modal-links">
         <a class="modal-link" href="${sp.inatUrl}" target="_blank">🌿 Ver en iNaturalist</a>
         ${sp.wikipedia ? `<a class="modal-link" href="${sp.wikipedia}" target="_blank">📖 Wikipedia</a>` : ''}
-        <button class="modal-link" id="modalMapBtn" style="cursor:pointer;background:none">🗺️ Distribución</button>
-        <button class="modal-link" id="modalPhenoBtn" style="cursor:pointer;background:none">📅 Fenología</button>
       </div>
       ${isSeen(sp.id) ? `<div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding:8px 12px;background:rgba(126,231,135,0.08);border:1px solid rgba(126,231,135,0.25);border-radius:8px;font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--accent)"><span>✓</span> Observada en iNaturalist</div>` : ''}
-
-      <!-- Inline phenology — hidden until button clicked -->
-      <div id="modalPhenoSection" style="display:none;margin-top:20px;background:var(--surface2);border-radius:10px;padding:14px 14px 10px;">
-        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:10px">Fenología mensual</div>
-        <div id="modalPhenoChart" style="display:flex;align-items:flex-end;gap:3px;height:70px;"></div>
-        <div id="modalPhenoFooter" style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--dim);display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;"></div>
-      </div>
       <div class="map-section">
         <div class="map-label">Distribución · iNaturalist + GBIF · todas las observaciones</div>
         <div class="map-loading" id="mapLoading">
@@ -1829,65 +1633,6 @@ function openModal(sp) {
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   if (currentMap) { currentMap.remove(); currentMap = null; }
-
-  // Wire up the map button
-  document.getElementById('modalMapBtn').addEventListener('click', e => {
-    openMapPopover(sp, e.currentTarget);
-  });
-
-  // Phenology button — renders inline inside modal (avoids popover positioning issues)
-  document.getElementById('modalPhenoBtn').addEventListener('click', async e => {
-    e.stopPropagation();
-    const section = document.getElementById('modalPhenoSection');
-    const chart   = document.getElementById('modalPhenoChart');
-    const footer  = document.getElementById('modalPhenoFooter');
-
-    if (section.style.display !== 'none') {
-      section.style.display = 'none';
-      return;
-    }
-
-    section.style.display = 'block';
-    chart.innerHTML  = `<div style="display:flex;align-items:center;gap:8px;color:var(--dim);font-family:'DM Mono',monospace;font-size:0.72rem"><div class="map-spinner" style="width:16px;height:16px;border-top-color:var(--accent)"></div> Cargando…</div>`;
-    footer.innerHTML = '';
-
-    const data = await fetchPhenologyData(sp);
-    const { inat, gbif, merged, hasGbif } = data;
-    const mergedMax = Math.max(...merged, 1);
-    const MONTHS_SHORT = ['E','F','M','A','M','J','J','A','S','O','N','D'];
-    const MONTHS_FULL  = ['Enero','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-
-    chart.innerHTML = '';
-    chart.style.cssText = 'display:flex;align-items:flex-end;gap:3px;height:70px;';
-
-    MONTHS_SHORT.forEach((m, i) => {
-      const h     = Math.round((merged[i] / mergedMax) * 62);
-      const inatH = hasGbif ? Math.round(h * (inat[i] / Math.max(inat[i] + gbif[i], 1))) : h;
-      const gbifH = h - inatH;
-
-      const wrap = document.createElement('div');
-      wrap.style.cssText = 'flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;';
-      wrap.title = `${MONTHS_FULL[i]}: ${inat[i].toLocaleString()} iNat${hasGbif ? ' · '+gbif[i].toLocaleString()+' GBIF' : ''}`;
-      wrap.innerHTML = `
-        <div style="display:flex;flex-direction:column;justify-content:flex-end;height:62px;width:100%">
-          ${hasGbif && gbifH > 0 ? `<div style="width:100%;height:${gbifH}px;background:#e36d1e;border-radius:${inatH>0?'0':'3px 3px'} 0 0;opacity:0.85"></div>` : ''}
-          ${inatH > 0 ? `<div style="width:100%;height:${inatH}px;background:#2d9e45;border-radius:${(!hasGbif||gbifH===0)?'3px 3px':'0 0'} 0 0;opacity:0.9"></div>` : ''}
-          ${h === 0 ? `<div style="width:100%;height:2px;background:var(--border);border-radius:1px"></div>` : ''}
-        </div>
-        <div style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--dim)">${m}</div>`;
-      chart.appendChild(wrap);
-    });
-
-    const inatTotal = inat.reduce((a,b)=>a+b,0);
-    const gbifTotal = gbif.reduce((a,b)=>a+b,0);
-    const regionTag = activePlaceId
-      ? `<span style="color:var(--accent2)">📍 ${activePlaceName}</span>`
-      : '<span>🌍 Global</span>';
-    footer.innerHTML = `
-      <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#2d9e45;display:inline-block"></span> iNat ${inatTotal.toLocaleString()}</span>
-      ${hasGbif ? `<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#e36d1e;display:inline-block"></span> GBIF ${gbifTotal.toLocaleString()}</span>` : ''}
-      <span style="margin-left:auto">${regionTag}</span>`;
-  });
 
   loadGallery(sp);
   setTimeout(() => loadMap(sp), 50);
@@ -1993,18 +1738,22 @@ async function loadMap(sp) {
 
     // 3. GBIF tile — resolve key then add layer
     const noteEl = document.getElementById('mapNote');
-    noteEl.innerHTML = '<span style="color:#2d9e45;font-weight:600">● iNaturalist</span> &nbsp; <span style="color:var(--dim)">· cargando GBIF…</span>';
+    noteEl.textContent = 'iNaturalist · todas las observaciones';
 
     getGbifKey(sp.name).then(gbifKey => {
-      if (!gbifKey || !currentMap) {
-        noteEl.innerHTML = '<span style="color:#2d9e45;font-weight:600">● iNaturalist</span> &nbsp; <span style="color:var(--dim)">· GBIF sin datos para esta especie</span>';
-        return;
-      }
+      if (!gbifKey || !currentMap) return;
       L.tileLayer(
-        `https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.png?taxonKey=${gbifKey}&style=orangeHeat.point&srs=EPSG:3857`,
-        { maxZoom: 19, opacity: 0.8 }
+        `https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}@1x.png?taxonKey=${gbifKey}&style=classic.point`,
+        { maxZoom: 19, opacity: 0.5 }
       ).addTo(map);
-      noteEl.innerHTML = '<span style="color:#2d9e45;font-weight:600">● iNaturalist</span> &nbsp; <span style="color:#e8642c;font-weight:600">● GBIF</span> &nbsp; <span style="color:var(--dim)">· todas las observaciones</span>';
+
+      // Layer toggle controls
+      noteEl.innerHTML = `
+        <span style="display:inline-flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="color:#2d9e45;font-weight:600">● iNaturalist</span>
+          <span style="color:#e36d1e;font-weight:600">● GBIF</span>
+          <span style="color:var(--dim)">· todas las observaciones · sin límite</span>
+        </span>`;
     });
 
     // 4. Labels on top
@@ -2012,36 +1761,9 @@ async function loadMap(sp) {
       subdomains: 'abcd', maxZoom: 19, opacity: 0.8
     }).addTo(map);
 
-    // 5. Auto-fit to where observations are
-    fitMapToBbox(map, sp.id);
-
   } catch(e) {
     document.getElementById('mapLoading').innerHTML = '<span style="color:var(--dim)">No se pudo cargar el mapa</span>';
   }
-}
-
-// Fetch bbox from a sample of observations and fit the map.
-// Cached per taxon so popover + modal share the same fetch.
-const bboxCache = {};
-async function fitMapToBbox(map, taxonId) {
-  try {
-    if (!bboxCache[taxonId]) {
-      const url = `${API}/observations?taxon_id=${taxonId}&quality_grade=research&captive=false&geo=true&per_page=50&order_by=id&locale=es`;
-      bboxCache[taxonId] = fetch(url)
-        .then(r => r.ok ? r.json() : null)
-        .then(d => {
-          const obs = (d?.results || []).filter(o => o.geojson);
-          if (!obs.length) return null;
-          const lats = obs.map(o => o.geojson.coordinates[1]);
-          const lngs = obs.map(o => o.geojson.coordinates[0]);
-          return [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]];
-        }).catch(() => null);
-    }
-    const bounds = await bboxCache[taxonId];
-    if (bounds && map) {
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 8 });
-    }
-  } catch(e) { /* keep world view */ }
 }
 
 document.getElementById('modalClose').addEventListener('click', closeModal);
@@ -2213,30 +1935,7 @@ async function selectSearchResult(taxon) {
 
   navStack.length = 0;
   history.replaceState({ depth: 0 }, '', '');
-
-  // If rank is directly in NEXT_RANK, use it; otherwise find the nearest
-  // known parent rank so enterTaxon can drill down correctly.
-  const knownRanks = ['kingdom','phylum','class','order','family','genus'];
-  let effectiveRank = rank;
-  if (!NEXT_RANK[rank]) {
-    // Find the closest ancestor rank we support
-    const ancestors = taxon.ancestor_ids || [];
-    effectiveRank = 'kingdom'; // fallback
-    for (const r of knownRanks) {
-      if (rank === r) { effectiveRank = r; break; }
-    }
-    // Treat intermediate ranks as their closest parent in the standard hierarchy
-    const rankOrder = ['stateofmatter','kingdom','subkingdom','infrakingdom','superphylum',
-      'phylum','subphylum','superclass','class','subclass','infraclass','superorder',
-      'order','suborder','infraorder','superfamily','family','subfamily','tribe',
-      'subtribe','genus','subgenus','species'];
-    const idx = rankOrder.indexOf(rank);
-    for (let i = idx - 1; i >= 0; i--) {
-      if (NEXT_RANK[rankOrder[i]]) { effectiveRank = rankOrder[i]; break; }
-    }
-  }
-
-  await enterTaxon(taxon.id, taxon.name, effectiveRank);
+  await enterTaxon(taxon.id, taxon.name, rank);
 }
 
 // ─── PLACE FILTER ─────────────────────────────────────────────
@@ -2763,6 +2462,7 @@ function renderMySpecies() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
+
 // ─── ALL SPECIES OVERLAY ───────────────────────────────────────
 const spOverlay      = document.getElementById('spOverlay');
 const spOverlayBody  = document.getElementById('spOverlayBody');
@@ -2770,15 +2470,13 @@ const spOverlayTitle = document.getElementById('spOverlayTitle');
 const spOverlayRank  = document.getElementById('spOverlayRank');
 const spOverlayMeta  = document.getElementById('spOverlayMeta');
 
-let spState = {
-  taxonId:null, taxonName:'', taxonRank:'',
-  page:1, total:null, loaded:[], done:false, loading:false
-};
+let spState = { taxonId:null, taxonName:'', taxonRank:'', page:1, total:null, loaded:[], done:false, loading:false };
 
-// Inject grouping CSS once
+// Inject grouping CSS
 (function(){
   const s = document.createElement('style');
   s.textContent = `
+    .sp-overlay.open { opacity:1!important; pointer-events:all!important; }
     .sp-group-header { grid-column:1/-1; display:flex; align-items:center; gap:10px; padding:6px 0 2px; margin-top:10px; }
     .sp-group-header:first-child { margin-top:0; }
     .sp-group-name { font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; font-weight:700; color:var(--text); }
@@ -2790,6 +2488,8 @@ let spState = {
     .sp-load-more-btn:hover { background:rgba(126,231,135,0.14); }
     .sp-load-more-btn:disabled { opacity:0.5; cursor:default; }
     .sp-load-done { grid-column:1/-1; text-align:center; padding:20px 0; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--dim); }
+    .sp-overlay-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; gap:14px; font-family:'DM Mono',monospace; font-size:0.82rem; color:var(--muted); }
+    @media(max-width:768px){ #spOverlay > div:first-child { padding:0 14px!important; height:52px!important; } #spOverlayBody { padding:12px 12px 60px!important; } }
   `;
   document.head.appendChild(s);
 })();
@@ -2809,103 +2509,57 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && spOverlay.classList.contains('open')) closeAllSpeciesOverlay();
 });
 
-const SP_GENERA_PER_PAGE = 5;  // genera shown per "Cargar más"
+const SP_GENERA_PER_PAGE = 5;
 
-// spState holds the genus queue and rendered state
 async function openAllSpeciesGenus(taxonId, taxonName, taxonRank) {
   spState = { taxonId, taxonName, taxonRank, page:1, total:null, loaded:[], done:false, loading:false };
-
   spOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
   spOverlayTitle.textContent = taxonName;
   spOverlayRank.textContent  = RANK_ES[taxonRank] || taxonRank;
   spOverlayMeta.textContent  = activePlaceName ? `📍 ${activePlaceName}` : '';
-
-  spOverlayBody.innerHTML = `
-    <div class="sp-overlay-loading" id="spInitLoad">
-      <div class="spinner"></div>
-      <div>Cargando géneros…</div>
-    </div>`;
-
-  // Step 1: get all genera inside this taxon
+  spOverlayBody.innerHTML = `<div class="sp-overlay-loading"><div class="spinner"></div><div>Cargando géneros…</div></div>`;
   let genera = [];
-  try {
-    genera = await spFetchAllGenera(taxonId);
-  } catch(e) {
-    spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--accent3)">Error al cargar géneros.</div>`;
-    return;
+  try { genera = await spFetchAllGenera(taxonId); } catch(e) {
+    spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--accent3)">Error al cargar géneros.</div>`; return;
   }
-
   if (!spOverlay.classList.contains('open')) return;
-
-  if (!genera.length) {
-    // Taxon has no genera (it might itself be a genus) — fall back to species_counts
-    spState.genusQueue = null;
-    spLoadNextPage();
-    return;
-  }
-
-  // Sort genera alphabetically and store as queue
+  if (!genera.length) { spState.genusQueue = null; spLoadNextPage(); return; }
   genera.sort((a, b) => a.name.localeCompare(b.name));
-  spState.genusQueue   = genera;      // all genera to process
-  spState.genusIdx     = 0;           // next genus to load
-  spState.totalGenera  = genera.length;
+  spState.genusQueue  = genera;
+  spState.genusIdx    = 0;
+  spState.totalGenera = genera.length;
   spState.totalSpecies = 0;
-
   spOverlayBody.innerHTML = `<div class="species-grid" id="spGrid"></div>`;
   spOverlayMeta.textContent = `0 géneros de ${genera.length}${activePlaceName ? ` · 📍 ${activePlaceName}` : ''}`;
-
-  // Load first batch
   await spLoadNextGenera();
 }
 
-// Fetch all genera inside a taxon (handles place filter)
 async function spFetchAllGenera(taxonId) {
   if (activePlaceId) {
-    // With place filter: fetch ALL species in this taxon+place, then group by genus.
-    // species_counts doesn't support rank=genus filter, so we get species and extract genera.
     let allSpecies = [], page = 1;
     while (true) {
-      const url = `${API}/observations/species_counts?taxon_id=${taxonId}&place_id=${activePlaceId}&verifiable=true&captive=false&per_page=200&page=${page}&locale=es`;
-      const r = await fetch(url);
+      const r = await fetch(`${API}/observations/species_counts?taxon_id=${taxonId}&place_id=${activePlaceId}&verifiable=true&captive=false&per_page=200&page=${page}&locale=es`);
       if (!r.ok) break;
       const d = await r.json();
       const results = d.results || [];
-      results.forEach(row => allSpecies.push({
-        id: row.taxon.id, name: row.taxon.name,
-        common: row.taxon.preferred_common_name || '',
-        photo: row.taxon.default_photo?.medium_url || row.taxon.default_photo?.url || null,
-        observations: row.count || 0,
-        inatUrl: `https://www.inaturalist.org/taxa/${row.taxon.id}`,
-        wikipedia: row.taxon.wikipedia_url || null,
-        ancestor_ids: row.taxon.ancestor_ids || [],
-      }));
-      if (results.length < 200) break;
-      if (page >= 25) break;
+      results.forEach(row => allSpecies.push({ id:row.taxon.id, name:row.taxon.name, common:row.taxon.preferred_common_name||'', photo:row.taxon.default_photo?.medium_url||row.taxon.default_photo?.url||null, observations:row.count||0, inatUrl:`https://www.inaturalist.org/taxa/${row.taxon.id}`, wikipedia:row.taxon.wikipedia_url||null, ancestor_ids:row.taxon.ancestor_ids||[] }));
+      if (results.length < 200 || page >= 25) break;
       page++;
       await new Promise(res => setTimeout(res, 60));
     }
-    // Group by genus (first word of scientific name)
     const genusMap = {};
-    allSpecies.forEach(sp => {
-      const g = sp.name.split(' ')[0];
-      if (!genusMap[g]) genusMap[g] = { id: null, name: g, species: [] };
-      genusMap[g].species.push(sp);
-    });
-    // Mark as pre-loaded so spLoadNextGenera skips fetching species again
+    allSpecies.forEach(sp => { const g = sp.name.split(' ')[0]; if (!genusMap[g]) genusMap[g] = { id:null, name:g, species:[] }; genusMap[g].species.push(sp); });
     return Object.values(genusMap).sort((a, b) => a.name.localeCompare(b.name));
   } else {
-    // Without place filter: use /taxa?rank=genus which works correctly
     let all = [], page = 1;
     while (true) {
-      const url = `${API}/taxa?taxon_id=${taxonId}&rank=genus&per_page=500&page=${page}&order_by=observations_count&locale=es`;
-      const r = await fetch(url);
+      const r = await fetch(`${API}/taxa?taxon_id=${taxonId}&rank=genus&per_page=500&page=${page}&order_by=observations_count&locale=es`);
       if (!r.ok) break;
       const d = await r.json();
       const results = d.results || [];
-      results.forEach(t => all.push({ id: t.id, name: t.name }));
-      if (results.length < 500) break;
-      if (page >= 10) break;
+      results.forEach(t => all.push({ id:t.id, name:t.name }));
+      if (results.length < 500 || page >= 10) break;
       page++;
       await new Promise(res => setTimeout(res, 60));
     }
@@ -2913,19 +2567,13 @@ async function spFetchAllGenera(taxonId) {
   }
 }
 
-// Load next SP_GENERA_PER_PAGE genera and their species
 async function spLoadNextGenera() {
-  if (!spOverlay.classList.contains('open')) return;
-  if (spState.loading) return;
+  if (!spOverlay.classList.contains('open') || spState.loading) return;
   spState.loading = true;
-
-  const queue   = spState.genusQueue;
-  const start   = spState.genusIdx;
-  const end     = Math.min(start + SP_GENERA_PER_PAGE, queue.length);
-  const batch   = queue.slice(start, end);
-
-  // Show loading indicator in footer while fetching
-  const grid = document.getElementById('spGrid');
+  const queue = spState.genusQueue, start = spState.genusIdx;
+  const end   = Math.min(start + SP_GENERA_PER_PAGE, queue.length);
+  const batch = queue.slice(start, end);
+  const grid  = document.getElementById('spGrid');
   if (grid) {
     grid.querySelectorAll('.sp-load-more-wrap, .sp-load-done, .sp-genus-loading').forEach(el => el.remove());
     const loadingEl = document.createElement('div');
@@ -2933,80 +2581,50 @@ async function spLoadNextGenera() {
     loadingEl.innerHTML = `<div class="map-spinner" style="margin:0 auto;border-top-color:var(--accent)"></div>`;
     grid.appendChild(loadingEl);
   }
-
-  // Fetch species for each genus in batch (parallel)
-  // Skip if species already pre-loaded (happens when place filter is active)
   await Promise.all(batch.map(async genus => {
-    if (genus.species) return; // already loaded by spFetchAllGenera
+    if (genus.species) return;
     try {
-      let species = [];
-      // Fetch all species pages for this genus (global, no place filter)
-      let page = 1;
+      let species = [], page = 1;
       while (true) {
-        const url = `${API}/taxa?taxon_id=${genus.id}&rank=species&per_page=200&page=${page}&order_by=observations_count&locale=es`;
-        const r = await fetch(url); const d = await r.json();
-        const res = (d.results || []).filter(t => !isExtinct(t)).map(spToObj);
+        const r = await fetch(`${API}/taxa?taxon_id=${genus.id}&rank=species&per_page=200&page=${page}&order_by=observations_count&locale=es`);
+        const d = await r.json();
+        const res = (d.results || []).map(spToObj);
         species = species.concat(res);
         if (res.length < 200) break;
         page++;
-        await new Promise(res2 => setTimeout(res2, 60));
+        await new Promise(r2 => setTimeout(r2, 60));
       }
       genus.species = species.sort((a, b) => a.name.localeCompare(b.name));
-    } catch(e) {
-      genus.species = [];
-    }
+    } catch(e) { genus.species = []; }
   }));
-
   if (!spOverlay.classList.contains('open')) return;
-
   spState.genusIdx = end;
   spState.done     = end >= queue.length;
   spState.loading  = false;
-
-  // Count total species loaded so far
   let totalSp = 0;
   queue.slice(0, end).forEach(g => { totalSp += (g.species || []).length; });
   spState.totalSpecies = totalSp;
-
-  // Render this batch
   spRenderGenusBatch(batch, end);
 }
 
 function spRenderGenusBatch(batch, endIdx) {
   const grid = document.getElementById('spGrid');
   if (!grid) return;
-
-  // Remove loading indicator and footer
   grid.querySelectorAll('.sp-load-more-wrap, .sp-load-done, .sp-genus-loading').forEach(el => el.remove());
-
-  // Append genera from this batch
   batch.forEach(genus => {
     if (!genus.species || !genus.species.length) return;
     const h = document.createElement('div');
     h.className = 'sp-group-header';
-    h.innerHTML = `
-      <span class="sp-group-rank">Género</span>
-      <span class="sp-group-name">${genus.name}</span>
-      <span class="sp-group-count">${genus.species.length} sp.</span>
-      <div class="sp-group-line"></div>`;
+    h.innerHTML = `<span class="sp-group-rank">Género</span><span class="sp-group-name">${genus.name}</span><span class="sp-group-count">${genus.species.length} sp.</span><div class="sp-group-line"></div>`;
     grid.appendChild(h);
     genus.species.forEach(sp => grid.appendChild(spMakeCard(sp)));
   });
-
-  // Update meta
-  const totalGenera = spState.totalGenera;
-  const shownGenera = endIdx;
-  const regionStr   = activePlaceName ? ` · 📍 ${activePlaceName}` : '';
-  spOverlayMeta.textContent = `${shownGenera} de ${totalGenera} géneros · ${spState.totalSpecies} sp.${regionStr}`;
-
-  // Footer
+  const regionStr = activePlaceName ? ` · 📍 ${activePlaceName}` : '';
+  spOverlayMeta.textContent = `${endIdx} de ${spState.totalGenera} géneros · ${spState.totalSpecies} sp.${regionStr}`;
   if (!spState.done) {
-    const remaining = totalGenera - shownGenera;
     const wrap = document.createElement('div');
     wrap.className = 'sp-load-more-wrap';
-    wrap.innerHTML = `<button class="sp-load-more-btn" id="spLoadMoreBtn">
-      Cargar más géneros (${remaining} restantes)
-    </button>`;
+    wrap.innerHTML = `<button class="sp-load-more-btn" id="spLoadMoreBtn">Cargar más géneros (${spState.totalGenera - endIdx} restantes)</button>`;
     grid.appendChild(wrap);
     document.getElementById('spLoadMoreBtn').addEventListener('click', () => {
       document.getElementById('spLoadMoreBtn').disabled = true;
@@ -3016,37 +2634,22 @@ function spRenderGenusBatch(batch, endIdx) {
   } else {
     const done = document.createElement('div');
     done.className = 'sp-load-done';
-    done.textContent = `✓ ${totalGenera} géneros · ${spState.totalSpecies} especies`;
+    done.textContent = `✓ ${spState.totalGenera} géneros · ${spState.totalSpecies} especies`;
     grid.appendChild(done);
   }
 }
 
-// Fallback: taxon is itself a genus — use species_counts directly
 async function spLoadNextPage() {
   if (spState.loading || spState.done) return;
   spState.loading = true;
   let results = [];
   try {
-    const base = activePlaceId
-      ? `taxon_id=${spState.taxonId}&place_id=${activePlaceId}&verifiable=true&captive=false`
-      : `taxon_id=${spState.taxonId}&verifiable=true&captive=false`;
-    const url = `${API}/observations/species_counts?${base}&per_page=200&page=${spState.page}&locale=es`;
-    const r = await fetch(url); const d = await r.json();
+    const base = activePlaceId ? `taxon_id=${spState.taxonId}&place_id=${activePlaceId}&verifiable=true&captive=false` : `taxon_id=${spState.taxonId}&verifiable=true&captive=false`;
+    const r = await fetch(`${API}/observations/species_counts?${base}&per_page=200&page=${spState.page}&locale=es`);
+    const d = await r.json();
     if (spState.page === 1) spState.total = d.total_results || null;
-    results = (d.results || []).map(row => ({
-      id: row.taxon.id, name: row.taxon.name,
-      common: row.taxon.preferred_common_name || '',
-      photo: row.taxon.default_photo?.medium_url || row.taxon.default_photo?.url || null,
-      observations: row.count || 0,
-      inatUrl: `https://www.inaturalist.org/taxa/${row.taxon.id}`,
-      wikipedia: row.taxon.wikipedia_url || null, ancestor_ids: row.taxon.ancestor_ids || [],
-    }));
-  } catch(e) {
-    spState.loading = false;
-    spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--accent3)">
-      Error. <button class="retry-btn" onclick="spLoadNextPage()">↺ Reintentar</button></div>`;
-    return;
-  }
+    results = (d.results || []).map(row => ({ id:row.taxon.id, name:row.taxon.name, common:row.taxon.preferred_common_name||'', photo:row.taxon.default_photo?.medium_url||row.taxon.default_photo?.url||null, observations:row.count||0, inatUrl:`https://www.inaturalist.org/taxa/${row.taxon.id}`, wikipedia:row.taxon.wikipedia_url||null, ancestor_ids:row.taxon.ancestor_ids||[] }));
+  } catch(e) { spState.loading = false; spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--accent3)">Error. <button class="retry-btn" onclick="spLoadNextPage()">↺ Reintentar</button></div>`; return; }
   if (!spOverlay.classList.contains('open')) return;
   spState.loaded = spState.loaded.concat(results);
   spState.done   = results.length === 0 || (spState.total !== null && spState.loaded.length >= spState.total);
@@ -3059,23 +2662,12 @@ function spRenderAll() {
   const totalLoaded = spState.loaded.length;
   const regionStr = activePlaceName ? ` · 📍 ${activePlaceName}` : '';
   spOverlayMeta.textContent = `${totalLoaded.toLocaleString()}${spState.total ? ' de '+spState.total.toLocaleString() : ''} especies${regionStr}`;
-
-  if (!totalLoaded) {
-    spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--muted)">No se encontraron especies</div>`;
-    return;
-  }
-
+  if (!totalLoaded) { spOverlayBody.innerHTML = `<div class="sp-overlay-loading" style="color:var(--muted)">No se encontraron especies</div>`; return; }
   const sorted = [...spState.loaded].sort((a,b) => a.name.localeCompare(b.name));
   const genusMap = {}, genera = [];
-  sorted.forEach(sp => {
-    const g = sp.name.split(' ')[0];
-    if (!genusMap[g]) { genusMap[g] = []; genera.push(g); }
-    genusMap[g].push(sp);
-  });
-
+  sorted.forEach(sp => { const g = sp.name.split(' ')[0]; if (!genusMap[g]) { genusMap[g] = []; genera.push(g); } genusMap[g].push(sp); });
   spOverlayBody.innerHTML = `<div class="species-grid" id="spGrid"></div>`;
   const grid = document.getElementById('spGrid');
-
   genera.forEach(genus => {
     const h = document.createElement('div');
     h.className = 'sp-group-header';
@@ -3083,48 +2675,374 @@ function spRenderAll() {
     grid.appendChild(h);
     genusMap[genus].forEach(sp => grid.appendChild(spMakeCard(sp)));
   });
-
   if (!spState.done) {
     const wrap = document.createElement('div');
     wrap.className = 'sp-load-more-wrap';
     wrap.innerHTML = `<button class="sp-load-more-btn" id="spLoadMoreBtn">Cargar más</button>`;
     grid.appendChild(wrap);
-    document.getElementById('spLoadMoreBtn').addEventListener('click', () => {
-      document.getElementById('spLoadMoreBtn').disabled = true;
-      spLoadNextPage();
-    });
+    document.getElementById('spLoadMoreBtn').addEventListener('click', () => { document.getElementById('spLoadMoreBtn').disabled = true; spLoadNextPage(); });
   } else {
-    const done = document.createElement('div');
-    done.className = 'sp-load-done';
-    done.textContent = `✓ ${totalLoaded.toLocaleString()} especies`;
-    grid.appendChild(done);
+    const done = document.createElement('div'); done.className = 'sp-load-done'; done.textContent = `✓ ${totalLoaded.toLocaleString()} especies`; grid.appendChild(done);
   }
 }
-
 
 function spMakeCard(sp) {
   const card = document.createElement('div');
   card.className = 'sp-card' + (isSeen(sp.id) ? ' seen-card' : '');
   card.dataset.spId = sp.id;
-  const img = sp.photo
-    ? `<img class="sp-img" src="${sp.photo}" alt="${sp.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'sp-no-img\\'><span>📷</span><small>sin foto</small></div>'">`
-    : `<div class="sp-no-img"><span>📷</span><small>sin foto</small></div>`;
-  card.innerHTML = `
-    <div class="sp-img-wrap">
-      ${img}
-      ${isSeen(sp.id) ? '<div class="seen-badge">✓</div>' : ''}
-      <button class="map-btn" title="Ver distribución">🗺️</button>
-      <button class="phenology-btn" title="Ver fenología">📅</button>
-    </div>
-    <div class="sp-info">
-      <div class="sp-sci">${sp.name}</div>
-      ${sp.common ? `<div class="sp-common">${sp.common}</div>` : ''}
-      <div class="sp-obs">${formatCount(sp.observations)} obs.</div>
-    </div>`;
+  const img = sp.photo ? `<img class="sp-img" src="${sp.photo}" alt="${sp.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'sp-no-img\\'><span>📷</span><small>sin foto</small></div>'">` : `<div class="sp-no-img"><span>📷</span><small>sin foto</small></div>`;
+  card.innerHTML = `<div class="sp-img-wrap">${img}${isSeen(sp.id)?'<div class="seen-badge">✓</div>':''}<button class="map-btn" title="Ver distribución">🗺️</button><button class="phenology-btn" title="Ver fenología">📅</button></div><div class="sp-info"><div class="sp-sci">${sp.name}</div>${sp.common?`<div class="sp-common">${sp.common}</div>`:''}<div class="sp-obs">${formatCount(sp.observations)} obs.</div></div>`;
   card.querySelector('.map-btn').addEventListener('click', e => { e.stopPropagation(); openMapPopover(sp, e.currentTarget); });
   card.querySelector('.phenology-btn').addEventListener('click', e => { e.stopPropagation(); openPhenologyPopover(sp, e.currentTarget); });
   card.addEventListener('click', () => openModal(sp));
   return card;
+}
+
+// ─── PDF EXPORT ────────────────────────────────────────────────
+
+document.getElementById('spPdfBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('spPdfBtn');
+  if (btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = '⏳';
+
+  try {
+    // Collect ALL species
+    let allSpecies = [];
+    if (spState.genusQueue) {
+      const queue = spState.genusQueue;
+      const unloaded = queue.filter(g => !g.species);
+      if (unloaded.length) {
+        btn.textContent = `⏳ ${unloaded.length} géneros…`;
+        await Promise.all(unloaded.map(async genus => {
+          try {
+            let spp = [], page = 1;
+            while (true) {
+              const url = activePlaceId
+                ? `${API}/observations/species_counts?taxon_id=${genus.id}&place_id=${activePlaceId}&verifiable=true&captive=false&per_page=200&locale=es`
+                : `${API}/taxa?taxon_id=${genus.id}&rank=species&per_page=200&page=${page}&order_by=observations_count&locale=es`;
+              const r = await fetch(url); const d = await r.json();
+              const res = activePlaceId
+                ? (d.results||[]).map(row => ({ id:row.taxon.id, name:row.taxon.name, common:row.taxon.preferred_common_name||'', photo:row.taxon.default_photo?.medium_url||null, observations:row.count||0 }))
+                : (d.results||[]).map(spToObj);
+              spp = spp.concat(res);
+              if (res.length < 200 || activePlaceId) break;
+              page++; await new Promise(r2 => setTimeout(r2, 50));
+            }
+            genus.species = spp.sort((a,b) => a.name.localeCompare(b.name));
+          } catch(e) { genus.species = []; }
+        }));
+      }
+      queue.forEach(g => { allSpecies = allSpecies.concat(g.species||[]); });
+    } else {
+      allSpecies = spState.loaded || [];
+    }
+    if (!allSpecies.length) { alert('No hay especies cargadas.'); return; }
+    openPrintPage(allSpecies, spState.taxonName||'Taxón', activePlaceName||'');
+  } catch(e) {
+    alert('Error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📄 <span class="pdf-label">PDF</span>';
+  }
+});
+
+async function openPrintPage(species, taxonName, regionName) {
+  // ── Resolve family names from ancestor_ids ────────────────────
+  // Collect all unique ancestor IDs across all species
+  const allAncIds = new Set();
+  species.forEach(sp => (sp.ancestor_ids || []).forEach(id => allAncIds.add(id)));
+
+  // Fetch taxa info for all ancestor IDs to find which are families
+  const familyMap = {}; // taxonId -> familyName
+  const ids = [...allAncIds];
+  for (let i = 0; i < ids.length; i += 200) {
+    try {
+      const r = await fetch(`${API}/taxa?id=${ids.slice(i,i+200).join(',')}&per_page=200&locale=es`);
+      const d = await r.json();
+      (d.results || []).forEach(t => {
+        if (t.rank === 'family') familyMap[t.id] = t.name;
+      });
+    } catch(e) {}
+    await new Promise(r => setTimeout(r, 60));
+  }
+
+  // Assign each species its family
+  const getFamily = sp => {
+    const ancestors = sp.ancestor_ids || [];
+    for (const id of [...ancestors].reverse()) { // closest ancestor first
+      if (familyMap[id]) return familyMap[id];
+    }
+    return 'Sin familia';
+  };
+
+  // ── Group: family → genus → species ──────────────────────────
+  const byFamily = {};
+  species.forEach(sp => {
+    const fam = getFamily(sp);
+    const gen = sp.name.split(' ')[0];
+    if (!byFamily[fam]) byFamily[fam] = {};
+    if (!byFamily[fam][gen]) byFamily[fam][gen] = [];
+    byFamily[fam][gen].push(sp);
+  });
+
+  // Sort families and genera alphabetically
+  const families = Object.keys(byFamily).sort();
+  families.forEach(fam => {
+    Object.keys(byFamily[fam]).forEach(gen => {
+      byFamily[fam][gen].sort((a,b) => a.name.localeCompare(b.name));
+    });
+  });
+
+  const sorted = [...species].sort((a,b) => a.name.localeCompare(b.name));
+  const fmtObs = n => n>=1e6?(n/1e6).toFixed(1)+'M':n>=1000?Math.round(n/1000)+'k':String(n||0);
+
+  // ── Build HTML blocks: family section > genus blocks ─────────
+  const familySections = families.map(fam => {
+    const genera = Object.keys(byFamily[fam]).sort();
+    const totalSp = genera.reduce((s, g) => s + byFamily[fam][g].length, 0);
+
+    const genusBlocks = genera.map(genus => {
+      const spp = byFamily[fam][genus];
+      const cols = Math.min(spp.length, 4);
+      const cells = spp.map(sp => {
+        const img = sp.photo
+          ? `<img src="${sp.photo.replace('/square.','/medium.').replace('/small.','/medium.')}" loading="eager">`
+          : `<div class="no-img">📷</div>`;
+        return `<div class="sp-cell">
+          <div class="sp-img-wrap">${img}</div>
+          <div class="sp-txt">
+            <div class="sp-sci">${sp.name}</div>
+            ${sp.common?`<div class="sp-com">${sp.common}</div>`:''}
+            <div class="sp-obs">${fmtObs(sp.observations)} obs.</div>
+          </div>
+        </div>`;
+      }).join('');
+
+      return `<div class="genus-block" data-cols="${cols}">
+        <div class="genus-banner">
+          <span class="genus-name">${genus}</span>
+          <span class="genus-count">${spp.length} sp.</span>
+        </div>
+        <div class="sp-grid" style="grid-template-columns:repeat(${cols},32mm)">${cells}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="family-section">
+      <div class="family-banner">
+        <span class="family-name">${fam}</span>
+        <span class="family-count">${totalSp} sp. · ${genera.length} gén.</span>
+      </div>
+      <div class="genera-wrap">${genusBlocks}</div>
+    </div>`;
+  }).join('');
+
+  const safeName = (taxonName+(regionName?'_'+regionName:'')).replace(/[^a-zA-Z0-9]/g,'_').toLowerCase();
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>${taxonName}</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d1117;
+  font-family: 'Arial', sans-serif;
+  color: #e6edf3;
+  padding: 8mm;
+  width: 210mm;
+  margin: 0;
+}
+
+/* PAGE HEADER */
+.page-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 4px; margin-bottom: 10px;
+  border-bottom: 1px solid #30363d;
+}
+.page-header .title {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 11pt; color: #e6edf3; letter-spacing: 0.02em;
+}
+.page-header .meta { font-family: monospace; font-size: 6.5pt; color: #484f58; }
+
+/* FAMILY SECTIONS — full width, stack vertically */
+.family-section {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.family-banner {
+  display: flex; align-items: baseline; gap: 8px;
+  background: #161b22;
+  border-left: 4px solid #58a6ff;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+.family-name  {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 9pt; color: #58a6ff; font-weight: bold;
+}
+.family-count { font-family: monospace; font-size: 6pt; color: #484f58; }
+
+/* GENERA WRAP inside each family */
+.genera-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+/* Each genus = self-contained block, width = number of cols × cell size */
+.genus-block {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0;
+  break-inside: avoid;
+}
+
+/* Genus banner — same width as its grid */
+.genus-banner {
+  display: flex; align-items: center; gap: 5px;
+  background: #161b22;
+  border-top: 2px solid #7ee787;
+  padding: 3px 5px 3px 6px;
+  width: 100%;
+}
+.genus-name  {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 7pt; color: #7ee787; font-weight: bold; white-space: nowrap;
+}
+.genus-count { font-family: monospace; font-size: 5.5pt; color: #484f58; }
+
+/* Species grid — square cells */
+.sp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 32mm);
+  gap: 1px;
+  background: #0d1117;
+}
+
+/* Species cell — square image + compact text */
+.sp-cell {
+  background: #0d1117;
+  overflow: hidden;
+  width: 32mm;
+}
+.sp-img-wrap {
+  width: 32mm; height: 32mm;   /* square */
+  overflow: hidden; background: #161b22;
+}
+.sp-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.no-img {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  color: #30363d; font-size: 16pt;
+}
+.sp-txt {
+  background: #0d1117;
+  padding: 2px 3px 3px;
+}
+.sp-sci {
+  font-family: Georgia, serif; font-style: italic;
+  font-size: 5.2pt; color: #7ee787; line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sp-com {
+  font-size: 4.8pt; color: #8b949e; line-height: 1.3; margin-top: 0.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sp-obs {
+  font-family: monospace; font-size: 4.2pt; color: #30363d; margin-top: 1px;
+}
+
+body {
+  background: #0d1117;
+  font-family: 'Arial', sans-serif;
+  color: #e6edf3;
+  padding: 8mm;
+  width: 210mm;
+  margin: 0;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  color-adjust: exact !important;
+}
+
+/* Force black background on every printed page */
+@media print {
+  @page {
+    margin: 8mm;
+    size: A4 portrait;
+  }
+  html, body {
+    background: #0d1117 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  /* Full-page black overlay behind everything */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20mm; left: -20mm;
+    width: 250mm; height: 320mm;
+    background: #0d1117 !important;
+    z-index: -1;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .genus-block { break-inside: avoid; }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+</style>
+</head>
+<body>
+<div style="position:fixed;inset:0;background:#0d1117;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact;"></div>
+<div class="page-header">
+  <span class="title">${taxonName}${regionName?' · '+regionName:''}</span>
+  <span class="meta">${sorted.length} especies · BioExplorer 🦋</span>
+</div>
+<div class="genera-wrap">${familySections}</div>
+<script>
+// Wait for all images, then print (browser saves as PDF)
+const imgs = Array.from(document.querySelectorAll('img'));
+let pending = imgs.filter(i => !i.complete || !i.naturalWidth).length;
+
+const tryPrint = () => {
+  pending--;
+  if (pending <= 0) doPrint();
+};
+const doPrint = () => {
+  window.focus();
+  window.print();
+};
+
+if (pending === 0) {
+  // All already loaded — small delay so page renders fully
+  setTimeout(doPrint, 300);
+} else {
+  imgs.forEach(img => {
+    if (!img.complete || !img.naturalWidth) {
+      img.onload  = tryPrint;
+      img.onerror = tryPrint;
+    }
+  });
+  // Hard fallback: print after 8s regardless
+  setTimeout(doPrint, 8000);
+}
+<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) { alert('Permite las ventanas emergentes para generar el PDF.'); return; }
+  win.document.write(html);
+  win.document.close();
 }
 
 loadLocal();
@@ -3135,19 +3053,10 @@ document.getElementById('logoBtn').addEventListener('click', () => {
   history.replaceState({ depth: 0 }, '', '');
   repaint();
 });
-document.getElementById('backBtn').addEventListener('click', () => {
-  // Close overlays first, then navigate back
-  if (spOverlay.classList.contains('open')) { closeAllSpeciesOverlay(); return; }
-  if (document.getElementById('modalOverlay').classList.contains('open')) { closeModal(); return; }
-  if (navStack.length > 0) {
-    navStack.pop();
-    history.replaceState({ depth: navStack.length }, '', '');
-    repaint();
-  }
-});
 updateAuthUI();
 updateSeenCounter();
 renderHome();
 </script>
+
 </body>
 </html>
