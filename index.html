@@ -203,10 +203,10 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .genus-header-name{font-family:'Playfair Display',serif;font-style:italic;font-size:.8rem;color:var(--accent);font-weight:600}
 .genus-header-count{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--dim)}
 .dense-grid{display:flex;flex-wrap:wrap;gap:4px;margin-left:6px}
-.dense-cell{width:18.5%;min-width:180px;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
+.dense-cell{width:110px;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
 .dense-cell:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.5);z-index:2}
 .dense-cell.seen-card{border-color:rgba(126,231,135,.4)}
-.dense-img-wrap{width:100%;height:150px;overflow:hidden;background:var(--surface2);position:relative}
+.dense-img-wrap{width:110px;height:90px;overflow:hidden;background:var(--surface2);position:relative}
 .dense-img{width:100%;height:100%;object-fit:cover;transition:transform .35s;display:block}
 .dense-cell:hover .dense-img{transform:scale(1.08)}
 .dense-no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--dim)}
@@ -217,14 +217,14 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .dense-action-btn.pheno-btn:hover{background:var(--accent);border-color:var(--accent)}
 .dense-seen-badge{position:absolute;top:4px;right:4px;background:var(--accent);color:#0d1117;border-radius:50%;width:16px;height:16px;font-size:.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
 .dense-info{padding:4px 6px 6px}
-.dense-sci{font-family:'Playfair Display',serif;font-style:italic;font-size:.82rem;color:var(--accent);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dense-sci{font-family:'Playfair Display',serif;font-style:italic;font-size:.62rem;color:var(--accent);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dense-com{font-size:.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .dense-obs{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--dim);margin-top:2px}
 .family-loading{text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:12px}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-@media(max-width:768px){header{padding:0 12px}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{gap:8px}.kingdom-card{min-width:140px}.kingdom-icon-wrap,.kingdom-img-wrap{width:56px;height:56px}.kingdom-icon-wrap{font-size:1.7rem}.kingdom-body{padding:10px 12px}.kingdom-name{font-size:.9rem}.kingdom-common,.kingdom-hint,.kingdom-arrow{display:none}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:46%}.dense-img-wrap{width:100%;height:120px}.dense-actions{opacity:1}}
+@media(max-width:768px){header{padding:0 12px}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{gap:8px}.kingdom-card{min-width:140px}.kingdom-icon-wrap,.kingdom-img-wrap{width:56px;height:56px}.kingdom-icon-wrap{font-size:1.7rem}.kingdom-body{padding:10px 12px}.kingdom-name{font-size:.9rem}.kingdom-common,.kingdom-hint,.kingdom-arrow{display:none}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:90px}.dense-img-wrap{width:90px;height:73px}.dense-actions{opacity:1}}
 @media(max-width:480px){.dense-cell{width:80px}.dense-img-wrap{width:80px;height:65px}}
 </style>
 </head>
@@ -293,8 +293,8 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 const API = 'https://api.inaturalist.org/v1';
 
 const KINGDOMS = [
-  { id:'animalia', name:'Animalia', common:'Reino Animal',      icon:'🦁', taxonId:1,     hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg' },
-  { id:'plantae',  name:'Plantae',  common:'Reino Vegetal',     icon:'🌱', taxonId:47126, hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg' },
+  { id:'animalia', name:'Animalia', common:'Reino Animal',      icon:'🐾', taxonId:1,     hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg' },
+  { id:'plantae',  name:'Plantae',  common:'Reino Vegetal',     icon:'🌿', taxonId:47126, hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg' },
   { id:'fungi',    name:'Fungi',    common:'Reino Fungi',       icon:'🍄', taxonId:47170, hint:'explorar filos \u2192', photo:null },
   { id:'chromista',name:'Chromista',common:'Algas y similares', icon:'🌊', taxonId:48222, hint:'explorar filos \u2192', photo:null },
   { id:'protozoa', name:'Protozoa', common:'Protozoos',         icon:'🔬', taxonId:47686, hint:'explorar filos \u2192', photo:null },
