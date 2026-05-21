@@ -203,10 +203,11 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .genus-header-name{font-family:'Playfair Display',serif;font-style:italic;font-size:.8rem;color:var(--accent);font-weight:600}
 .genus-header-count{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--dim)}
 .dense-grid{display:flex;flex-wrap:wrap;gap:4px;margin-left:6px}
-.dense-cell{width:110px;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
+/* ── PATCH 1: tarjetas 160px (era 110px) ── */
+.dense-cell{width:160px;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
 .dense-cell:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.5);z-index:2}
 .dense-cell.seen-card{border-color:rgba(126,231,135,.4)}
-.dense-img-wrap{width:110px;height:90px;overflow:hidden;background:var(--surface2);position:relative}
+.dense-img-wrap{width:160px;height:130px;overflow:hidden;background:var(--surface2);position:relative}
 .dense-img{width:100%;height:100%;object-fit:cover;transition:transform .35s;display:block}
 .dense-cell:hover .dense-img{transform:scale(1.08)}
 .dense-no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--dim)}
@@ -216,16 +217,16 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .dense-action-btn:hover{background:var(--accent2);color:#0d1117;border-color:var(--accent2)}
 .dense-action-btn.pheno-btn:hover{background:var(--accent);border-color:var(--accent)}
 .dense-seen-badge{position:absolute;top:4px;right:4px;background:var(--accent);color:#0d1117;border-radius:50%;width:16px;height:16px;font-size:.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.dense-info{padding:4px 6px 6px}
-.dense-sci{font-family:'Playfair Display',serif;font-style:italic;font-size:.62rem;color:var(--accent);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dense-com{font-size:.58rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.dense-obs{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--dim);margin-top:2px}
+.dense-info{padding:6px 8px 8px}
+.dense-sci{font-family:'Playfair Display',serif;font-style:italic;font-size:.72rem;color:var(--accent);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dense-com{font-size:.65rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.dense-obs{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--dim);margin-top:2px}
 .family-loading{text-align:center;padding:60px 20px;font-family:'DM Mono',monospace;font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:12px}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-@media(max-width:768px){header{padding:0 12px}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{gap:8px}.kingdom-card{min-width:140px}.kingdom-icon-wrap,.kingdom-img-wrap{width:56px;height:56px}.kingdom-icon-wrap{font-size:1.7rem}.kingdom-body{padding:10px 12px}.kingdom-name{font-size:.9rem}.kingdom-common,.kingdom-hint,.kingdom-arrow{display:none}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:90px}.dense-img-wrap{width:90px;height:73px}.dense-actions{opacity:1}}
-@media(max-width:480px){.dense-cell{width:80px}.dense-img-wrap{width:80px;height:65px}}
+@media(max-width:768px){header{padding:0 12px}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{gap:8px}.kingdom-card{min-width:140px}.kingdom-icon-wrap,.kingdom-img-wrap{width:56px;height:56px}.kingdom-icon-wrap{font-size:1.7rem}.kingdom-body{padding:10px 12px}.kingdom-name{font-size:.9rem}.kingdom-common,.kingdom-hint,.kingdom-arrow{display:none}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:120px}.dense-img-wrap{width:120px;height:97px}.dense-actions{opacity:1}}
+@media(max-width:480px){.dense-cell{width:100px}.dense-img-wrap{width:100px;height:81px}}
 </style>
 </head>
 <body>
@@ -290,19 +291,23 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
+
 const API = 'https://api.inaturalist.org/v1';
 
 const KINGDOMS = [
-  { id:'animalia', name:'Animalia', common:'Reino Animal',      icon:'🐾', taxonId:1,     hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg' },
-  { id:'plantae',  name:'Plantae',  common:'Reino Vegetal',     icon:'🌿', taxonId:47126, hint:'explorar filos \u2192', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg' },
-  { id:'fungi',    name:'Fungi',    common:'Reino Fungi',       icon:'🍄', taxonId:47170, hint:'explorar filos \u2192', photo:null },
-  { id:'chromista',name:'Chromista',common:'Algas y similares', icon:'🌊', taxonId:48222, hint:'explorar filos \u2192', photo:null },
-  { id:'protozoa', name:'Protozoa', common:'Protozoos',         icon:'🔬', taxonId:47686, hint:'explorar filos \u2192', photo:null },
+  { id:'animalia', name:'Animalia', common:'Reino Animal',      icon:'🐾', taxonId:1,     hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg' },
+  { id:'plantae',  name:'Plantae',  common:'Reino Vegetal',     icon:'🌿', taxonId:47126, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg' },
+  { id:'fungi',    name:'Fungi',    common:'Reino Fungi',       icon:'🍄', taxonId:47170, hint:'explorar filos →', photo:null },
+  { id:'chromista',name:'Chromista',common:'Algas y similares', icon:'🌊', taxonId:48222, hint:'explorar filos →', photo:null },
+  { id:'protozoa', name:'Protozoa', common:'Protozoos',         icon:'🔬', taxonId:47686, hint:'explorar filos →', photo:null },
 ];
 
-const RANK_ES = { kingdom:'Reino',phylum:'Filo',class:'Clase',order:'Orden',family:'Familia',genus:'G\u00e9nero',species:'Especie',subspecies:'Subespecie',stateofmatter:'Estado',subkingdom:'Subreino',superphylum:'Superfilo',subphylum:'Subfilo',superclass:'Superclase',subclass:'Subclase',superorder:'Superorden',suborder:'Suborden',superfamily:'Superfamilia',subfamily:'Subfamilia',tribe:'Tribu',subgenus:'Subg\u00e9nero' };
+const RANK_ES = { kingdom:'Reino',phylum:'Filo',class:'Clase',order:'Orden',family:'Familia',genus:'Género',species:'Especie',subspecies:'Subespecie',stateofmatter:'Estado',subkingdom:'Subreino',superphylum:'Superfilo',subphylum:'Subfilo',superclass:'Superclase',subclass:'Subclase',superorder:'Superorden',suborder:'Suborden',superfamily:'Superfamilia',subfamily:'Subfamilia',tribe:'Tribu',subgenus:'Subgénero' };
 const RANK_ICONS = { kingdom:'🌍',phylum:'🔬',class:'📦',order:'📋',family:'🏠',genus:'🔤',species:'🌿',subspecies:'🔬' };
 const NEXT_RANK = { kingdom:'phylum',phylum:'class',class:'order',order:'family',family:'genus',genus:'species' };
+
+// ── PATCH 2: emoji map para filos y clases ──
+const TAXON_EMOJIS = {'Chordata':'🦴','Arthropoda':'🦀','Mollusca':'🐚','Annelida':'🐛','Echinodermata':'⭐','Cnidaria':'🫧','Mammalia':'🦁','Aves':'🦅','Reptilia':'🦎','Amphibia':'🐸','Actinopterygii':'🐟','Chondrichthyes':'🦈','Insecta':'🦋','Arachnida':'🕷','Malacostraca':'🦞','Magnoliopsida':'🌸','Liliopsida':'🌼','Pinopsida':'🌲','Polypodiopsida':'🌿','Agaricomycetes':'🍄'};
 
 // NAV
 const navStack = [];
@@ -321,13 +326,15 @@ function renderBreadcrumb(){
   bc.innerHTML=html;
   bc.querySelectorAll('.crumb[data-nav]').forEach(el=>el.addEventListener('click',()=>goToNav(parseInt(el.dataset.nav))));
 }
+// ── PATCH 4: back button via popstate ──
 window.addEventListener('popstate',()=>{
   if(document.getElementById('modalOverlay').classList.contains('open')){ closeModal(); history.pushState({depth:navStack.length},'',''); return; }
+  if(spOverlay.style.opacity==='1'){ closeAllSpeciesOverlay(); history.pushState({depth:navStack.length},'',''); return; }
   if(navStack.length>0){ navStack.pop(); repaint(); }
+  else renderHome();
 });
 history.replaceState({depth:0},'','');
 
-// API CACHE
 let activePlaceId=null, activePlaceName='';
 const cache={};
 function clearCache(){ Object.keys(cache).forEach(k=>delete cache[k]); }
@@ -399,41 +406,30 @@ async function fetchPlaceCount(taxonId){
   return cache[k];
 }
 
-// HOME
 function renderHome(){
   const m=document.getElementById('main');
-  m.innerHTML='<div class="level-header"><div><div class="level-rank">Clasificaci\u00f3n</div><div class="level-title">Reinos de la vida</div></div><div class="level-sub">Reino \u2192 Filo \u2192 Clase \u2192 Orden \u2192 Familia \u2192 G\u00e9nero \u2192 Especie</div></div><div class="kingdom-grid" id="kingdomGrid"></div>';
+  m.innerHTML='<div class="level-header"><div><div class="level-rank">Clasificación</div><div class="level-title">Reinos de la vida</div></div><div class="level-sub">Reino → Filo → Clase → Orden → Familia → Género → Especie</div></div><div class="kingdom-grid" id="kingdomGrid"></div>';
   const grid=document.getElementById('kingdomGrid');
   KINGDOMS.forEach(k=>{
     const card=document.createElement('div');
     card.className='kingdom-card';
     const media=document.createElement('div');
-    if(k.photo){
-      media.className='kingdom-img-wrap';
-      const img=document.createElement('img');
-      img.className='kingdom-img'; img.src=k.photo; img.alt=k.name; img.loading='lazy';
-      media.appendChild(img);
-    } else {
-      media.className='kingdom-icon-wrap';
-      media.textContent=k.icon;
-    }
-    const body=document.createElement('div');
-    body.className='kingdom-body';
-    body.innerHTML='<div class="kingdom-badge">Reino</div><div class="kingdom-name">'+k.name+'</div><div class="kingdom-common">'+k.common+'</div><div class="kingdom-hint">'+k.hint+'</div>';
-    const arrow=document.createElement('div');
-    arrow.className='kingdom-arrow'; arrow.textContent='\u2192';
+    if(k.photo){ media.className='kingdom-img-wrap'; const img=document.createElement('img'); img.className='kingdom-img'; img.src=k.photo; img.alt=k.name; img.loading='lazy'; media.appendChild(img); }
+    else { media.className='kingdom-icon-wrap'; media.textContent=k.icon; }
+    const body=document.createElement('div'); body.className='kingdom-body';
+    body.innerHTML='<div class="kingdom-badge">Reino</div><div class="kingdom-name">'+k.icon+' '+k.name+'</div><div class="kingdom-common">'+k.common+'</div><div class="kingdom-hint">'+k.hint+'</div>';
+    const arrow=document.createElement('div'); arrow.className='kingdom-arrow'; arrow.textContent='→';
     card.appendChild(media); card.appendChild(body); card.appendChild(arrow);
     card.addEventListener('click',()=>enterTaxon(k.taxonId,k.name,'kingdom'));
     grid.appendChild(card);
   });
 }
 
-// DRILL DOWN
 async function enterTaxon(taxonId,taxonName,currentRank){
   const nextRank=NEXT_RANK[currentRank]; if(!nextRank) return;
   const nextRankEs=RANK_ES[nextRank]||nextRank;
   const renderFn=async()=>{
-    showLoading(`Cargando ${nextRankEs}s de <em>${taxonName}</em>\u2026`+(activePlaceId?'<br><small style="color:var(--dim)">Filtrando por zona\u2026</small>':''));
+    showLoading(`Cargando ${nextRankEs}s de <em>${taxonName}</em>…`+(activePlaceId?'<br><small style="color:var(--dim)">Filtrando por zona…</small>':''));
     try{
       if(nextRank==='species'){
         const species=await cachedSpecies(taxonId);
@@ -457,10 +453,12 @@ async function enterTaxon(taxonId,taxonName,currentRank){
 async function renderCardGrid(items,rankLabel,clickFn){
   const grid=document.getElementById('grid');
   items.forEach(item=>{
+    // ── PATCH 3: emoji prefix for known taxa ──
+    const emoji=TAXON_EMOJIS[item.name]||'';
     const globalCount=item.complete_species_count;
-    const pillText=activePlaceId?'\u2026':(globalCount?globalCount.toLocaleString()+' spp.':'\u2014');
+    const pillText=activePlaceId?'…':(globalCount?globalCount.toLocaleString()+' spp.':'—');
     const photo=item.default_photo?.medium_url||item.default_photo?.url||null;
-    const card=makeCard(rankLabel,item.name,item.preferred_common_name||'',[pillText],photo);
+    const displayName=(emoji?'<span style="font-style:normal;font-family:sans-serif">'+emoji+'</span> ':'')+item.name; const card=makeCard(rankLabel,displayName,item.preferred_common_name||'',[pillText],photo);
     card.addEventListener('click',()=>clickFn(item));
     grid.appendChild(card);
   });
@@ -484,7 +482,6 @@ function showChildrenLevel(parent,children,childRank){
   renderCardGrid(sorted,childRankEs,child=>enterTaxon(child.id,child.name,childRank));
 }
 
-// ── ENRICH FAMILIES via ancestor_ids ─────────────────────────
 const familyNameCache = {};
 async function enrichFamilies(species){
   const needed=new Set();
@@ -507,55 +504,39 @@ async function enrichFamilies(species){
   });
 }
 
-// ── DENSE SPECIES GRID: familia → género ─────────────────────
 async function showSpecies(parent,species){
   const parentRankEs=RANK_ES[parent.rank]||parent.rank;
   const m=document.getElementById('main');
-  m.innerHTML=`<div class="level-header"><div><div class="level-rank">${parentRankEs}</div><div class="level-title">${parent.name}</div></div><div class="level-sub">${species.length} especies</div></div><div class="family-loading" id="familyLoading"><div class="spinner" style="width:30px;height:30px"></div><span>Clasificando por familia\u2026</span></div><div class="species-dense-wrap" id="denseWrap" style="display:none"></div>`;
-
+  m.innerHTML=`<div class="level-header"><div><div class="level-rank">${parentRankEs}</div><div class="level-title">${parent.name}</div></div><div class="level-sub">${species.length} especies</div></div><div class="family-loading" id="familyLoading"><div class="spinner" style="width:30px;height:30px"></div><span>Clasificando por familia…</span></div><div class="species-dense-wrap" id="denseWrap" style="display:none"></div>`;
   await enrichFamilies(species);
-
   const byFamily={};
   species.forEach(sp=>{
-    const fam=sp._family||'Sin familia';
-    const gen=sp.name.split(' ')[0];
+    const fam=sp._family||'Sin familia'; const gen=sp.name.split(' ')[0];
     if(!byFamily[fam]) byFamily[fam]={};
     if(!byFamily[fam][gen]) byFamily[fam][gen]=[];
     byFamily[fam][gen].push(sp);
   });
-
-  const families=Object.keys(byFamily).sort((a,b)=>{
-    if(a==='Sin familia') return 1; if(b==='Sin familia') return -1; return a.localeCompare(b);
-  });
+  const families=Object.keys(byFamily).sort((a,b)=>{ if(a==='Sin familia') return 1; if(b==='Sin familia') return -1; return a.localeCompare(b); });
   families.forEach(fam=>Object.keys(byFamily[fam]).forEach(gen=>byFamily[fam][gen].sort((a,b)=>a.name.localeCompare(b.name))));
-
   const loadEl=document.getElementById('familyLoading');
   const wrap=document.getElementById('denseWrap');
   if(loadEl) loadEl.style.display='none';
   wrap.style.display='block';
-
   families.forEach(fam=>{
     const genera=Object.keys(byFamily[fam]).sort();
     const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
-    const famBlock=document.createElement('div');
-    famBlock.className='family-block';
-    const famHdr=document.createElement('div');
-    famHdr.className='family-header';
-    famHdr.innerHTML='<span class="family-header-name">Familia '+fam+'</span><span class="family-header-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span>';
+    const famBlock=document.createElement('div'); famBlock.className='family-block';
+    const famHdr=document.createElement('div'); famHdr.className='family-header';
+    famHdr.innerHTML='<span class="family-header-name">Familia '+fam+'</span><span class="family-header-count">'+totalSp+' sp. · '+genera.length+' gén.</span>';
     famBlock.appendChild(famHdr);
     genera.forEach(genus=>{
       const spp=byFamily[fam][genus];
-      const genBlock=document.createElement('div');
-      genBlock.className='genus-block-dense';
-      const genHdr=document.createElement('div');
-      genHdr.className='genus-header-dense';
+      const genBlock=document.createElement('div'); genBlock.className='genus-block-dense';
+      const genHdr=document.createElement('div'); genHdr.className='genus-header-dense';
       genHdr.innerHTML='<span class="genus-header-name">'+genus+'</span><span class="genus-header-count">'+spp.length+' sp.</span>';
-      const grid=document.createElement('div');
-      grid.className='dense-grid';
+      const grid=document.createElement('div'); grid.className='dense-grid';
       spp.forEach(sp=>grid.appendChild(makeDenseCell(sp)));
-      genBlock.appendChild(genHdr);
-      genBlock.appendChild(grid);
-      famBlock.appendChild(genBlock);
+      genBlock.appendChild(genHdr); genBlock.appendChild(grid); famBlock.appendChild(genBlock);
     });
     wrap.appendChild(famBlock);
   });
@@ -565,41 +546,23 @@ function makeDenseCell(sp){
   const cell=document.createElement('div');
   cell.className='dense-cell'+(isSeen(sp.id)?' seen-card':'');
   cell.dataset.spId=sp.id;
-  const imgWrap=document.createElement('div');
-  imgWrap.className='dense-img-wrap';
-  if(sp.photo){
-    const img=document.createElement('img');
-    img.className='dense-img'; img.src=sp.photo; img.alt=sp.name; img.loading='lazy';
-    imgWrap.appendChild(img);
-  } else {
-    const ph=document.createElement('div');
-    ph.className='dense-no-img'; ph.textContent='📷';
-    imgWrap.appendChild(ph);
-  }
-  if(isSeen(sp.id)){
-    const badge=document.createElement('div');
-    badge.className='dense-seen-badge'; badge.textContent='✓';
-    imgWrap.appendChild(badge);
-  }
-  const actions=document.createElement('div');
-  actions.className='dense-actions';
-  const mapBtn=document.createElement('button');
-  mapBtn.className='dense-action-btn'; mapBtn.title='Ver distribución'; mapBtn.textContent='🗺';
-  const phenoBtn=document.createElement('button');
-  phenoBtn.className='dense-action-btn pheno-btn'; phenoBtn.title='Ver fenología'; phenoBtn.textContent='📅';
+  const imgWrap=document.createElement('div'); imgWrap.className='dense-img-wrap';
+  if(sp.photo){ const img=document.createElement('img'); img.className='dense-img'; img.src=sp.photo; img.alt=sp.name; img.loading='lazy'; imgWrap.appendChild(img); }
+  else { const ph=document.createElement('div'); ph.className='dense-no-img'; ph.textContent='📷'; imgWrap.appendChild(ph); }
+  if(isSeen(sp.id)){ const badge=document.createElement('div'); badge.className='dense-seen-badge'; badge.textContent='✓'; imgWrap.appendChild(badge); }
+  const actions=document.createElement('div'); actions.className='dense-actions';
+  const mapBtn=document.createElement('button'); mapBtn.className='dense-action-btn'; mapBtn.title='Ver distribución'; mapBtn.textContent='🗺';
+  const phenoBtn=document.createElement('button'); phenoBtn.className='dense-action-btn pheno-btn'; phenoBtn.title='Ver fenología'; phenoBtn.textContent='📅';
   mapBtn.addEventListener('click',e=>{e.stopPropagation();openMapPopover(sp,e.currentTarget);});
   phenoBtn.addEventListener('click',e=>{e.stopPropagation();openPhenologyPopover(sp,e.currentTarget);});
-  actions.appendChild(mapBtn); actions.appendChild(phenoBtn);
-  imgWrap.appendChild(actions);
-  const info=document.createElement('div');
-  info.className='dense-info';
+  actions.appendChild(mapBtn); actions.appendChild(phenoBtn); imgWrap.appendChild(actions);
+  const info=document.createElement('div'); info.className='dense-info';
   info.innerHTML='<div class="dense-sci">'+sp.name+'</div>'+(sp.common?'<div class="dense-com">'+sp.common+'</div>':'')+'<div class="dense-obs">'+formatCount(sp.observations)+' obs.</div>';
   cell.appendChild(imgWrap); cell.appendChild(info);
   cell.addEventListener('click',()=>openModal(sp));
   return cell;
 }
 
-// MAP POPOVER
 let popoverMap=null,popoverSpId=null;
 const popover=document.getElementById('mapPopover');
 const popoverHeader=document.getElementById('mapPopoverHeader');
@@ -628,8 +591,8 @@ async function openMapPopover(sp,triggerEl){
   if(popover._activeTrigger) popover._activeTrigger.classList.remove('active');
   triggerEl.classList.add('active');
   if(popoverMap){ popoverMap.remove(); popoverMap=null; }
-  popoverHeader.textContent=sp.name+(sp.common?' \u00b7 '+sp.common:'');
-  popoverBody.innerHTML='<div class="map-popover-loading"><div class="map-spinner"></div><span>Cargando mapa\u2026</span></div>';
+  popoverHeader.textContent=sp.name+(sp.common?' · '+sp.common:'');
+  popoverBody.innerHTML='<div class="map-popover-loading"><div class="map-spinner"></div><span>Cargando mapa…</span></div>';
   popoverFooter.textContent='';
   positionEl(popover,triggerEl,300,260);
   popover.classList.add('visible'); popover._activeTrigger=triggerEl;
@@ -647,10 +610,9 @@ async function openMapPopover(sp,triggerEl){
     popoverFooter.textContent='iNaturalist + GBIF';
   });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,opacity:0.8}).addTo(popoverMap);
-  popoverFooter.textContent='iNaturalist \u00b7 todas las observaciones';
+  popoverFooter.textContent='iNaturalist · todas las observaciones';
   setTimeout(()=>popoverMap?.invalidateSize(),30);
-  // Center on actual observations
-  const placeParam = activePlaceId ? '&place_id='+activePlaceId : '';
+  const placeParam=activePlaceId?'&place_id='+activePlaceId:'';
   fetch(API+'/observations?taxon_id='+sp.id+'&quality_grade=research&captive=false&per_page=50&order_by=votes'+placeParam)
   .then(r=>r.json()).then(d=>{
     const obs=(d.results||[]).filter(o=>o.location);
@@ -666,7 +628,6 @@ function closeMapPopover(){
   setTimeout(()=>{ if(popoverMap&&!popover.classList.contains('visible')){ popoverMap.remove(); popoverMap=null; } },220);
 }
 
-// PHENOLOGY POPOVER
 const phenologyPopover=document.getElementById('phenologyPopover');
 const phenologyHeader=document.getElementById('phenologyHeader');
 const phenologyBody=document.getElementById('phenologyBody');
@@ -677,8 +638,7 @@ const MONTHS=['E','F','M','A','M','J','J','A','S','O','N','D'];
 const MONTH_FULL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
 async function fetchPhenologyData(sp){
-  const placeKey=activePlaceId||'g';
-  const cacheKey=sp.id+'_'+placeKey;
+  const placeKey=activePlaceId||'g'; const cacheKey=sp.id+'_'+placeKey;
   if(phenologyCache[cacheKey]) return phenologyCache[cacheKey];
   let inatUrl=API+'/observations/histogram?taxon_id='+sp.id+'&quality_grade=research&captive=false&date_field=observed&interval=month_of_year';
   if(activePlaceId) inatUrl+='&place_id='+activePlaceId;
@@ -693,21 +653,19 @@ async function fetchPhenologyData(sp){
     const merged=inat.map((v,i)=>v+gbif[i]*scale);
     return {inat,gbif,merged,hasGbif:!activePlaceId&&gbifPeak>0};
   });
-  phenologyCache[cacheKey]=promise;
-  return promise;
+  phenologyCache[cacheKey]=promise; return promise;
 }
 
 function renderPhenologyChart(data){
-  const{inat,gbif,merged,hasGbif}=data;
-  const mergedMax=Math.max(...merged,1);
+  const{inat,gbif,merged,hasGbif}=data; const mergedMax=Math.max(...merged,1);
   phenologyBody.innerHTML='<div class="phenology-body"><div class="phenology-chart" id="phenoChart"></div></div>';
   const chart=document.getElementById('phenoChart');
   MONTHS.forEach((m,i)=>{
     const h=Math.round((merged[i]/mergedMax)*62);
     const inatH=hasGbif?Math.round(h*(inat[i]/Math.max(inat[i]+gbif[i],1))):h;
     const gbifH=h-inatH;
-    const tip=hasGbif?'iNat: '+inat[i].toLocaleString()+' \u00b7 GBIF: '+gbif[i].toLocaleString():'iNat: '+inat[i].toLocaleString();
-    const wrap=document.createElement('div'); wrap.className='phenology-bar-wrap'; wrap.title=MONTH_FULL[i]+' \u2014 '+tip;
+    const tip=hasGbif?'iNat: '+inat[i].toLocaleString()+' · GBIF: '+gbif[i].toLocaleString():'iNat: '+inat[i].toLocaleString();
+    const wrap=document.createElement('div'); wrap.className='phenology-bar-wrap'; wrap.title=MONTH_FULL[i]+' — '+tip;
     let bars='';
     if(hasGbif&&gbifH>0) bars+='<div style="width:100%;height:'+gbifH+'px;background:#e36d1e;opacity:.85;border-radius:'+(inatH>0?'0':'3px 3px')+' 0 0"></div>';
     if(inatH>0) bars+='<div style="width:100%;height:'+inatH+'px;background:#2d9e45;opacity:.9;border-radius:'+(!hasGbif||gbifH===0?'3px 3px':'0 0')+' 0 0"></div>';
@@ -715,18 +673,17 @@ function renderPhenologyChart(data){
     wrap.innerHTML='<div style="display:flex;flex-direction:column;justify-content:flex-end;height:62px;width:100%">'+bars+'</div><div class="phenology-month">'+m+'</div>';
     chart.appendChild(wrap);
   });
-  const regionTag=activePlaceId?'<span style="color:var(--accent2)">\ud83d\udccd '+activePlaceName+'</span>':'<span>\ud83c\udf0d Global</span>';
+  const regionTag=activePlaceId?'<span style="color:var(--accent2)">📍 '+activePlaceName+'</span>':'<span>🌍 Global</span>';
   phenologyFooter.innerHTML='<div class="phenology-legend"><div class="phenology-dot" style="background:#2d9e45"></div> iNat</div>'+(hasGbif?'<div class="phenology-legend"><div class="phenology-dot" style="background:#e36d1e"></div> GBIF</div>':'')+'<div style="margin-left:auto">'+regionTag+'</div>';
 }
 
 async function openPhenologyPopover(sp,triggerEl){
   if(phenologySpId===sp.id&&phenologyPopover.classList.contains('visible')){ closePhenologyPopover(); return; }
-  closeMapPopover();
-  phenologySpId=sp.id;
+  closeMapPopover(); phenologySpId=sp.id;
   if(phenologyPopover._activeTrigger) phenologyPopover._activeTrigger.classList.remove('active');
   triggerEl.classList.add('active');
-  phenologyHeader.textContent=sp.name+(sp.common?' \u00b7 '+sp.common:'');
-  phenologyBody.innerHTML='<div class="phenology-loading"><div class="map-spinner" style="border-top-color:var(--accent)"></div><span>Cargando fenolog\u00eda\u2026</span></div>';
+  phenologyHeader.textContent=sp.name+(sp.common?' · '+sp.common:'');
+  phenologyBody.innerHTML='<div class="phenology-loading"><div class="map-spinner" style="border-top-color:var(--accent)"></div><span>Cargando fenología…</span></div>';
   phenologyFooter.innerHTML='';
   positionEl(phenologyPopover,triggerEl,320,200);
   phenologyPopover.classList.add('visible'); phenologyPopover._activeTrigger=triggerEl;
@@ -745,13 +702,12 @@ document.addEventListener('click',e=>{
 },true);
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeMapPopover(); closePhenologyPopover(); } });
 
-// HELPERS
 function makeCard(rank,name,common,pills,photo){
   const card=document.createElement('div'); card.className='taxon-card';
   const wrap=document.createElement('div'); wrap.className='tc-img-wrap';
   if(photo){ const img=document.createElement('img'); img.className='tc-img'; img.src=photo; img.alt=name; img.loading='lazy'; wrap.appendChild(img); }
-  else { const ph=document.createElement('div'); ph.className='tc-no-img'; ph.textContent='\ud83d\udd2c'; wrap.appendChild(ph); }
-  const arrow=document.createElement('span'); arrow.className='tc-arrow'; arrow.textContent='\u2192';
+  else { const ph=document.createElement('div'); ph.className='tc-no-img'; ph.textContent='🔬'; wrap.appendChild(ph); }
+  const arrow=document.createElement('span'); arrow.className='tc-arrow'; arrow.textContent='→';
   const body=document.createElement('div'); body.className='tc-body';
   body.innerHTML='<div class="tc-rank">'+rank+'</div><div class="tc-name">'+name+'</div>'+(common?'<div class="tc-common">'+common+'</div>':'')+'<div class="tc-meta">'+pills.map(p=>'<span class="tc-pill">'+p+'</span>').join('')+'</div>';
   card.appendChild(wrap); card.appendChild(arrow); card.appendChild(body);
@@ -759,10 +715,9 @@ function makeCard(rank,name,common,pills,photo){
 }
 function formatCount(n){ if(!n) return '0'; if(n>=1000000) return (n/1000000).toFixed(1)+'M'; if(n>=1000) return (n/1000).toFixed(0)+'k'; return n.toString(); }
 
-// MODAL
 let currentMap=null,galleryPhotos=[],galleryIndex=0;
 function openModal(sp){
-  document.getElementById('modalContent').innerHTML='<div class="gallery-wrap" id="galleryWrap"><div class="gallery-loading-overlay"><div class="map-spinner" style="width:32px;height:32px;border-top-color:var(--accent)"></div></div></div><div class="modal-body"><div class="modal-sci">'+sp.name+'</div>'+(sp.common?'<div class="modal-common">'+sp.common+'</div>':'')+'<div class="modal-stats"><div><div class="ms-val">'+((sp.observations||0).toLocaleString())+'</div><div class="ms-key">Observaciones</div></div></div><div class="modal-links"><a class="modal-link" href="'+sp.inatUrl+'" target="_blank">\ud83c\udf3f Ver en iNaturalist</a>'+(sp.wikipedia?'<a class="modal-link" href="'+sp.wikipedia+'" target="_blank">\ud83d\udcd6 Wikipedia</a>':'')+'</div>'+(isSeen(sp.id)?'<div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding:8px 12px;background:rgba(126,231,135,.08);border:1px solid rgba(126,231,135,.25);border-radius:8px;font-family:\'DM Mono\',monospace;font-size:.75rem;color:var(--accent)">\u2713 Observada en iNaturalist</div>':'')+'<div class="map-section"><div class="map-label">Distribuci\u00f3n \u00b7 iNaturalist + GBIF</div><div class="map-loading" id="mapLoading"><div class="map-spinner"></div><span>Iniciando mapa\u2026</span></div><div id="speciesMap" style="display:none"></div><div class="map-note" id="mapNote"></div></div></div>';
+  document.getElementById('modalContent').innerHTML='<div class="gallery-wrap" id="galleryWrap"><div class="gallery-loading-overlay"><div class="map-spinner" style="width:32px;height:32px;border-top-color:var(--accent)"></div></div></div><div class="modal-body"><div class="modal-sci">'+sp.name+'</div>'+(sp.common?'<div class="modal-common">'+sp.common+'</div>':'')+'<div class="modal-stats"><div><div class="ms-val">'+((sp.observations||0).toLocaleString())+'</div><div class="ms-key">Observaciones</div></div></div><div class="modal-links"><a class="modal-link" href="'+sp.inatUrl+'" target="_blank">🌿 Ver en iNaturalist</a>'+(sp.wikipedia?'<a class="modal-link" href="'+sp.wikipedia+'" target="_blank">📖 Wikipedia</a>':'')+'</div>'+(isSeen(sp.id)?'<div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding:8px 12px;background:rgba(126,231,135,.08);border:1px solid rgba(126,231,135,.25);border-radius:8px;font-family:\'DM Mono\',monospace;font-size:.75rem;color:var(--accent)">✓ Observada en iNaturalist</div>':'')+'<div class="map-section"><div class="map-label">Distribución · iNaturalist + GBIF</div><div class="map-loading" id="mapLoading"><div class="map-spinner"></div><span>Iniciando mapa…</span></div><div id="speciesMap" style="display:none"></div><div class="map-note" id="mapNote"></div></div></div>';
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
   if(currentMap){ currentMap.remove(); currentMap=null; }
@@ -786,9 +741,9 @@ async function loadGallery(sp){
 
 function renderGallery(){
   const wrap=document.getElementById('galleryWrap'); if(!wrap) return;
-  if(!galleryPhotos.length){ wrap.innerHTML='<div style="width:100%;aspect-ratio:16/9;background:var(--surface2);border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:center;font-size:4rem">\ud83d\udcf7</div>'; return; }
+  if(!galleryPhotos.length){ wrap.innerHTML='<div style="width:100%;aspect-ratio:16/9;background:var(--surface2);border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:center;font-size:4rem">📷</div>'; return; }
   const p=galleryPhotos[galleryIndex],total=galleryPhotos.length;
-  wrap.innerHTML='<img class="gallery-main" id="galleryMain" src="'+p.url+'" alt="">'+(total>1?'<div class="gallery-counter">'+(galleryIndex+1)+' / '+total+'</div>':'')+(galleryIndex>0?'<button class="gallery-nav prev" id="galleryPrev">\u2039</button>':'')+(galleryIndex<total-1?'<button class="gallery-nav next" id="galleryNext">\u203a</button>':'')+(p.attr?'<div class="gallery-caption">'+p.attr+'</div>':'')+(total>1?'<div class="gallery-thumbs" id="galleryThumbs">'+galleryPhotos.map((ph,i)=>'<img class="gallery-thumb '+(i===galleryIndex?'active':'')+'" src="'+ph.thumb+'" data-i="'+i+'" alt="">').join('')+'</div>':'');
+  wrap.innerHTML='<img class="gallery-main" id="galleryMain" src="'+p.url+'" alt="">'+(total>1?'<div class="gallery-counter">'+(galleryIndex+1)+' / '+total+'</div>':'')+(galleryIndex>0?'<button class="gallery-nav prev" id="galleryPrev">‹</button>':'')+(galleryIndex<total-1?'<button class="gallery-nav next" id="galleryNext">›</button>':'')+(p.attr?'<div class="gallery-caption">'+p.attr+'</div>':'')+(total>1?'<div class="gallery-thumbs" id="galleryThumbs">'+galleryPhotos.map((ph,i)=>'<img class="gallery-thumb '+(i===galleryIndex?'active':'')+'" src="'+ph.thumb+'" data-i="'+i+'" alt="">').join('')+'</div>':'');
   document.getElementById('galleryMain')?.addEventListener('click',()=>{ document.getElementById('lightboxImg').src=p.url; document.getElementById('lightbox').classList.add('open'); });
   document.getElementById('galleryPrev')?.addEventListener('click',()=>{ galleryIndex--; renderGallery(); });
   document.getElementById('galleryNext')?.addEventListener('click',()=>{ galleryIndex++; renderGallery(); });
@@ -803,11 +758,11 @@ async function loadMap(sp){
     const map=L.map('speciesMap',{zoom:2,center:[20,0],zoomControl:true,attributionControl:false}); currentMap=map;
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(map);
     L.tileLayer('https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?taxon_id='+sp.id+'&color=%232d9e45&quality_grade=research&captive=false',{maxZoom:19,opacity:0.85}).addTo(map);
-    const noteEl=document.getElementById('mapNote'); noteEl.textContent='iNaturalist \u00b7 todas las observaciones';
+    const noteEl=document.getElementById('mapNote'); noteEl.textContent='iNaturalist · todas las observaciones';
     getGbifKey(sp.name).then(gbifKey=>{
       if(!gbifKey||!currentMap) return;
       L.tileLayer('https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}@1x.png?taxonKey='+gbifKey+'&style=classic.point',{maxZoom:19,opacity:0.5}).addTo(map);
-      noteEl.innerHTML='<span style="color:#2d9e45;font-weight:600">\u25cf iNaturalist</span> <span style="color:#e36d1e;font-weight:600">\u25cf GBIF</span>';
+      noteEl.innerHTML='<span style="color:#2d9e45;font-weight:600">● iNaturalist</span> <span style="color:#e36d1e;font-weight:600">● GBIF</span>';
     });
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,opacity:0.8}).addTo(map);
   }catch(e){ document.getElementById('mapLoading').innerHTML='<span style="color:var(--dim)">No se pudo cargar el mapa</span>'; }
@@ -818,14 +773,12 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; if(currentMap){ currentMap.remove(); currentMap=null; } }
 (function(){ const sheet=document.getElementById('modalSheet'); let startY=0,isDragging=false; sheet.addEventListener('touchstart',e=>{ if(e.target.classList.contains('modal-handle')||e.touches[0].clientY-sheet.getBoundingClientRect().top<60){ startY=e.touches[0].clientY; isDragging=true; sheet.style.transition='none'; } },{passive:true}); sheet.addEventListener('touchmove',e=>{ if(!isDragging) return; const dy=Math.max(0,e.touches[0].clientY-startY); sheet.style.transform='translateY('+dy+'px)'; },{passive:true}); sheet.addEventListener('touchend',e=>{ if(!isDragging) return; isDragging=false; sheet.style.transition=''; if(e.changedTouches[0].clientY-startY>120) closeModal(); else sheet.style.transform=''; }); })();
 
-// LOADING/ERROR
-function showLoading(msg){ document.getElementById('main').innerHTML='<div class="loading"><div class="spinner"></div><p class="loading-msg">'+msg+'</p><p class="loading-sub">v\u00eda iNaturalist API</p></div>'; }
-function showError(title,detail,retryFn){ document.getElementById('main').innerHTML='<div class="error-box"><h3>'+title+'</h3><p>'+detail+'</p>'+(retryFn?'<button class="retry-btn" id="retryBtn">\u21ba Reintentar</button>':'')+'</div>'; if(retryFn) document.getElementById('retryBtn').addEventListener('click',retryFn); }
+function showLoading(msg){ document.getElementById('main').innerHTML='<div class="loading"><div class="spinner"></div><p class="loading-msg">'+msg+'</p><p class="loading-sub">vía iNaturalist API</p></div>'; }
+function showError(title,detail,retryFn){ document.getElementById('main').innerHTML='<div class="error-box"><h3>'+title+'</h3><p>'+detail+'</p>'+(retryFn?'<button class="retry-btn" id="retryBtn">↺ Reintentar</button>':'')+'</div>'; if(retryFn) document.getElementById('retryBtn').addEventListener('click',retryFn); }
 
-// SEARCH
 let searchTimer=null,searchFocusIndex=-1,searchResults=[];
 const searchInput=document.getElementById('searchInput'),searchDropdown=document.getElementById('searchDropdown'),searchClear=document.getElementById('searchClear');
-searchInput.addEventListener('input',()=>{ const q=searchInput.value.trim(); searchClear.classList.toggle('visible',q.length>0); clearTimeout(searchTimer); if(q.length<2){ closeDropdown(); return; } searchDropdown.innerHTML='<div class="search-msg">Buscando\u2026</div>'; searchDropdown.classList.add('open'); searchTimer=setTimeout(()=>doSearch(q),300); });
+searchInput.addEventListener('input',()=>{ const q=searchInput.value.trim(); searchClear.classList.toggle('visible',q.length>0); clearTimeout(searchTimer); if(q.length<2){ closeDropdown(); return; } searchDropdown.innerHTML='<div class="search-msg">Buscando…</div>'; searchDropdown.classList.add('open'); searchTimer=setTimeout(()=>doSearch(q),300); });
 searchInput.addEventListener('keydown',e=>{ const items=searchDropdown.querySelectorAll('.search-result'); if(e.key==='ArrowDown'){ e.preventDefault(); searchFocusIndex=Math.min(searchFocusIndex+1,items.length-1); items.forEach((el,i)=>el.classList.toggle('focused',i===searchFocusIndex)); } else if(e.key==='ArrowUp'){ e.preventDefault(); searchFocusIndex=Math.max(searchFocusIndex-1,0); items.forEach((el,i)=>el.classList.toggle('focused',i===searchFocusIndex)); } else if(e.key==='Enter'){ if(searchFocusIndex>=0&&searchResults[searchFocusIndex]) selectSearchResult(searchResults[searchFocusIndex]); } else if(e.key==='Escape'){ closeDropdown(); searchInput.blur(); } });
 searchClear.addEventListener('click',()=>{ searchInput.value=''; searchClear.classList.remove('visible'); closeDropdown(); searchInput.focus(); });
 document.addEventListener('click',e=>{ if(!document.getElementById('searchWrap').contains(e.target)) closeDropdown(); });
@@ -836,10 +789,7 @@ function renderSearchDropdown(results,q){
   if(!results.length){ searchDropdown.innerHTML='<div class="search-msg">Sin resultados para "'+q+'"</div>'; return; }
   searchDropdown.innerHTML='';
   results.forEach((taxon,i)=>{
-    const photo=taxon.default_photo?.square_url;
-    const rank=taxon.rank||'';
-    const icon=RANK_ICONS[rank]||'\ud83d\udd2c';
-    const rankEs=RANK_ES[rank]||rank;
+    const photo=taxon.default_photo?.square_url; const rank=taxon.rank||''; const icon=RANK_ICONS[rank]||'🔬'; const rankEs=RANK_ES[rank]||rank;
     const el=document.createElement('div'); el.className='search-result';
     const photoEl=document.createElement(photo?'img':'div');
     if(photo){ photoEl.className='sr-photo'; photoEl.src=photo; photoEl.alt=''; }
@@ -861,14 +811,13 @@ async function selectSearchResult(taxon){
   await enterTaxon(taxon.id,taxon.name,rank);
 }
 
-// PLACE FILTER
 const placeInput=document.getElementById('placeInput'),placeClear=document.getElementById('placeClear'),placeDropdown=document.getElementById('placeDropdown');
 const activePlaceEl=document.getElementById('activePlace'),activePlaceNameEl=document.getElementById('activePlaceName');
 let placeTimer=null,placeResults=[],placeFocusIndex=-1,previewMap=null,previewTimer=null;
-const PLACE_TYPE_ICONS={1:'\ud83c\udff3\ufe0f',2:'\ud83d\udccd',8:'\ud83c\udf0d',9:'\ud83c\udff3\ufe0f',10:'\ud83c\udf32',29:'\ud83c\udff3\ufe0f'};
-const PLACE_TYPE_LABELS={0:'Lugar',1:'Pa\u00eds',2:'Estado',3:'Condado',8:'Continente',9:'Pa\u00eds',10:'Parque',12:'Pa\u00eds',13:'Regi\u00f3n',14:'Oc\u00e9ano',24:'Comarca',29:'Pa\u00eds',100:'Comunidad',101:'Condado',102:'Ciudad'};
+const PLACE_TYPE_ICONS={1:'🏳️',2:'📍',8:'🌍',9:'🏳️',10:'🌲',29:'🏳️'};
+const PLACE_TYPE_LABELS={0:'Lugar',1:'País',2:'Estado',3:'Condado',8:'Continente',9:'País',10:'Parque',12:'País',13:'Región',14:'Océano',24:'Comarca',29:'País',100:'Comunidad',101:'Condado',102:'Ciudad'};
 function ensureDropdownStructure(){ if(!document.getElementById('placeResultsList')){ placeDropdown.innerHTML='<div id="placeResultsList"></div><div class="place-preview" id="placePreviewInner"><div id="placePreviewMap"></div><div class="place-preview-label" id="placePreviewLabelInner"></div></div>'; } }
-placeInput.addEventListener('input',()=>{ const q=placeInput.value.trim(); placeClear.classList.toggle('visible',q.length>0); clearTimeout(placeTimer); if(q.length<2){ closePlaceDropdown(); return; } ensureDropdownStructure(); document.getElementById('placeResultsList').innerHTML='<div class="place-msg">Buscando\u2026</div>'; placeDropdown.classList.add('open'); placeTimer=setTimeout(()=>searchPlaces(q),350); });
+placeInput.addEventListener('input',()=>{ const q=placeInput.value.trim(); placeClear.classList.toggle('visible',q.length>0); clearTimeout(placeTimer); if(q.length<2){ closePlaceDropdown(); return; } ensureDropdownStructure(); document.getElementById('placeResultsList').innerHTML='<div class="place-msg">Buscando…</div>'; placeDropdown.classList.add('open'); placeTimer=setTimeout(()=>searchPlaces(q),350); });
 placeInput.addEventListener('keydown',e=>{ const items=placeDropdown.querySelectorAll('.place-result'); if(e.key==='ArrowDown'){ e.preventDefault(); placeFocusIndex=Math.min(placeFocusIndex+1,items.length-1); items.forEach((el,i)=>el.classList.toggle('focused',i===placeFocusIndex)); if(placeResults[placeFocusIndex]) showPreview(placeResults[placeFocusIndex]); } else if(e.key==='ArrowUp'){ e.preventDefault(); placeFocusIndex=Math.max(placeFocusIndex-1,0); items.forEach((el,i)=>el.classList.toggle('focused',i===placeFocusIndex)); if(placeResults[placeFocusIndex]) showPreview(placeResults[placeFocusIndex]); } else if(e.key==='Enter'&&placeFocusIndex>=0){ selectPlace(placeResults[placeFocusIndex]); } else if(e.key==='Escape'){ closePlaceDropdown(); placeInput.blur(); } });
 placeClear.addEventListener('click',()=>{ placeInput.value=''; placeClear.classList.remove('visible'); closePlaceDropdown(); placeInput.focus(); });
 document.addEventListener('click',e=>{ if(!document.getElementById('placeWrap').contains(e.target)) closePlaceDropdown(); });
@@ -881,8 +830,7 @@ function renderPlaceDropdown(results){
   if(!results.length){ list.innerHTML='<div class="place-msg">Sin resultados</div>'; return; }
   list.innerHTML='';
   results.forEach((place,i)=>{
-    const icon=PLACE_TYPE_ICONS[place.place_type]||'\ud83d\udccd';
-    const type=PLACE_TYPE_LABELS[place.place_type]||'Lugar';
+    const icon=PLACE_TYPE_ICONS[place.place_type]||'📍'; const type=PLACE_TYPE_LABELS[place.place_type]||'Lugar';
     const el=document.createElement('div'); el.className='place-result';
     el.innerHTML='<span class="pr-icon">'+icon+'</span><span class="pr-name">'+(place.display_name||place.name)+'</span><span class="pr-type">'+type+'</span>';
     el.addEventListener('mousedown',e=>e.preventDefault());
@@ -903,30 +851,26 @@ async function showPreview(place){
   else previewMap.invalidateSize();
   previewMap.eachLayer(l=>{ if(l instanceof L.GeoJSON||l instanceof L.CircleMarker) previewMap.removeLayer(l); });
   const geojson=await obtenerGeometria(place.id);
-  if(geojson){ try{ const geo=typeof geojson==='string'?JSON.parse(geojson):geojson; const layer=L.geoJSON(geo,{style:{color:'#58a6ff',weight:2,fillColor:'#58a6ff',fillOpacity:.18}}).addTo(previewMap); previewMap.fitBounds(layer.getBounds(),{padding:[16,16]}); }catch(e){ mostrarPuntoFallback(place); } }
-  else mostrarPuntoFallback(place);
+  if(geojson){ try{ const geo=typeof geojson==='string'?JSON.parse(geojson):geojson; const layer=L.geoJSON(geo,{style:{color:'#58a6ff',weight:2,fillColor:'#58a6ff',fillOpacity:.18}}).addTo(previewMap); previewMap.fitBounds(layer.getBounds(),{padding:[16,16]}); }catch(e){ if(place.location){ const[lat,lng]=place.location.split(',').map(Number); if(!isNaN(lat)&&!isNaN(lng)){ previewMap.setView([lat,lng],5); L.circleMarker([lat,lng],{radius:8,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.8,weight:2}).addTo(previewMap); } } } }
+  else if(place.location){ const[lat,lng]=place.location.split(',').map(Number); if(!isNaN(lat)&&!isNaN(lng)){ previewMap.setView([lat,lng],5); L.circleMarker([lat,lng],{radius:8,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.8,weight:2}).addTo(previewMap); } }
 }
-function mostrarPuntoFallback(place){ if(!previewMap||!place.location) return; const[lat,lng]=place.location.split(',').map(Number); if(isNaN(lat)||isNaN(lng)) return; previewMap.setView([lat,lng],5); L.circleMarker([lat,lng],{radius:8,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.8,weight:2}).addTo(previewMap); }
 function selectPlace(place){ activePlaceId=place.id; activePlaceName=place.display_name||place.name; clearCache(); Object.keys(phenologyCache).forEach(k=>delete phenologyCache[k]); placeInput.value=''; placeClear.classList.remove('visible'); closePlaceDropdown(); activePlaceNameEl.textContent=activePlaceName; activePlaceEl.classList.add('visible'); repaint(); }
 function clearPlaceFilter(){ activePlaceId=null; activePlaceName=''; clearCache(); Object.keys(phenologyCache).forEach(k=>delete phenologyCache[k]); activePlaceEl.classList.remove('visible'); repaint(); }
 
-// iNAT SYNC
 let currentUser=null,seenCache={};
 function saveLocal(){ try{ localStorage.setItem('bioexp_user',JSON.stringify(currentUser)); localStorage.setItem('bioexp_seen',JSON.stringify(seenCache)); }catch(e){} }
 function loadLocal(){ try{ const u=localStorage.getItem('bioexp_user'),s=localStorage.getItem('bioexp_seen'); if(u) currentUser=JSON.parse(u); if(s) seenCache=JSON.parse(s); }catch(e){} }
 function isSeen(id){ return !!seenCache[id]; }
 function updateSeenCounter(){ const el=document.getElementById('mySpeciesCount'); if(el) el.textContent=Object.keys(seenCache).length; }
 function updateAuthUI(){ const btn=document.getElementById('authBtn'),avatar=document.getElementById('authAvatar'); if(!btn) return; if(currentUser){ if(avatar&&currentUser.icon){ avatar.style.backgroundImage='url('+currentUser.icon+')'; avatar.style.display='block'; } document.getElementById('authLabel').textContent='@'+currentUser.login; }else{ if(avatar) avatar.style.display='none'; document.getElementById('authLabel').textContent='Conectar iNat'; } }
-async function handleAuth(){ if(currentUser){ const action=confirm('@'+currentUser.login+'\n\nPulsa OK para resincronizar.'); if(action){ const toast=showToast('Sincronizando\u2026','muted'); try{ await syncInatUser(currentUser.login,null); saveLocal(); updateSeenCounter(); toast.update('\u2713 '+Object.keys(seenCache).length+' especies','accent'); }catch(e){ toast.update('\u2717 '+e.message,'accent3'); } setTimeout(()=>toast.remove(),3000); } }else showInatLoginPrompt(); }
-function showToast(msg,color){ const d=document.createElement('div'); d.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 20px;z-index:3000;font-family:\'DM Mono\',monospace;font-size:.78rem;color:var(--'+color+');white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5)'; d.textContent=msg; document.body.appendChild(d); return {update(m,c){d.textContent=m;d.style.color='var(--'+c+')';},remove(){d.remove();}}; }
+async function handleAuth(){ if(currentUser){ const action=confirm('@'+currentUser.login+'\n\nPulsa OK para resincronizar.'); if(action){ const toast=showToast('Sincronizando…','muted'); try{ await syncInatUser(currentUser.login,null); saveLocal(); updateSeenCounter(); toast.update('✓ '+Object.keys(seenCache).length+' especies','accent'); }catch(e){ toast.update('✗ '+e.message,'accent3'); } setTimeout(()=>toast.remove(),3000); } }else showInatLoginPrompt(); }
+function showToast(msg,color){ const d=document.createElement('div'); d.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 20px;z-index:3000;font-family:\'DM Mono\',monospace;font-size:.78rem;color:var(--'+color+');white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5)'; d.textContent=msg; document.body.appendChild(d); return {update(m,c){d.textContent=m;d.style.color='var(--'+c+')';return;},remove(){d.remove();}}; }
 function showInatLoginPrompt(){
-  const m=document.createElement('div');
-  m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px';
-  m.innerHTML='<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:360px;width:100%;text-align:center"><div style="font-size:2.5rem;margin-bottom:12px">\ud83c\udf3f</div><div style="font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.3rem;margin-bottom:8px">Conectar con iNaturalist</div><div style="color:var(--muted);font-size:.8rem;margin-bottom:20px;font-family:\'DM Mono\',monospace;line-height:1.5">Introduce tu usuario para sincronizar tus observaciones</div><input id="inatLoginInput" type="text" placeholder="tu_usuario_inat" autocomplete="off" style="width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:16px;outline:none;margin-bottom:12px;text-align:center"><button id="inatLoginBtn" style="width:100%;padding:12px;background:var(--accent);color:#0d1117;border:none;border-radius:8px;font-size:.9rem;cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:600;margin-bottom:8px">Sincronizar</button><div id="inatLoginStatus" style="font-family:\'DM Mono\',monospace;font-size:.72rem;color:var(--muted);min-height:18px;line-height:1.5"></div><button id="inatLoginClose" style="margin-top:10px;background:none;border:none;color:var(--dim);cursor:pointer;font-size:.82rem">Cancelar</button></div>';
+  const m=document.createElement('div'); m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px';
+  m.innerHTML='<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:360px;width:100%;text-align:center"><div style="font-size:2.5rem;margin-bottom:12px">🌿</div><div style="font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.3rem;margin-bottom:8px">Conectar con iNaturalist</div><div style="color:var(--muted);font-size:.8rem;margin-bottom:20px;font-family:\'DM Mono\',monospace;line-height:1.5">Introduce tu usuario para sincronizar tus observaciones</div><input id="inatLoginInput" type="text" placeholder="tu_usuario_inat" autocomplete="off" style="width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:\'DM Mono\',monospace;font-size:16px;outline:none;margin-bottom:12px;text-align:center"><button id="inatLoginBtn" style="width:100%;padding:12px;background:var(--accent);color:#0d1117;border:none;border-radius:8px;font-size:.9rem;cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:600;margin-bottom:8px">Sincronizar</button><div id="inatLoginStatus" style="font-family:\'DM Mono\',monospace;font-size:.72rem;color:var(--muted);min-height:18px;line-height:1.5"></div><button id="inatLoginClose" style="margin-top:10px;background:none;border:none;color:var(--dim);cursor:pointer;font-size:.82rem">Cancelar</button></div>';
   const input=m.querySelector('#inatLoginInput'),btn=m.querySelector('#inatLoginBtn'),status=m.querySelector('#inatLoginStatus');
-  const doSync=async()=>{ const login=input.value.trim(); if(!login) return; btn.disabled=true; btn.textContent='\u2026'; status.style.color='var(--muted)'; status.textContent='Verificando usuario\u2026'; try{ await syncInatUser(login,status); saveLocal(); updateAuthUI(); updateSeenCounter(); status.style.color='var(--accent)'; setTimeout(()=>document.body.removeChild(m),1000); }catch(e){ status.style.color='var(--accent3)'; status.textContent='\u2717 '+e.message; btn.disabled=false; btn.textContent='Sincronizar'; } };
-  btn.addEventListener('click',doSync);
-  input.addEventListener('keydown',e=>{ if(e.key==='Enter') doSync(); });
+  const doSync=async()=>{ const login=input.value.trim(); if(!login) return; btn.disabled=true; btn.textContent='…'; status.style.color='var(--muted)'; status.textContent='Verificando usuario…'; try{ await syncInatUser(login,status); saveLocal(); updateAuthUI(); updateSeenCounter(); status.style.color='var(--accent)'; setTimeout(()=>document.body.removeChild(m),1000); }catch(e){ status.style.color='var(--accent3)'; status.textContent='✗ '+e.message; btn.disabled=false; btn.textContent='Sincronizar'; } };
+  btn.addEventListener('click',doSync); input.addEventListener('keydown',e=>{ if(e.key==='Enter') doSync(); });
   m.querySelector('#inatLoginClose').addEventListener('click',()=>document.body.removeChild(m));
   document.body.appendChild(m); setTimeout(()=>input.focus(),50);
 }
@@ -936,39 +880,36 @@ async function syncInatUser(login,statusEl){
   const userData=await userRes.json();
   const user=(userData.results||[]).find(u=>u.login.toLowerCase()===login.toLowerCase());
   if(!user) throw new Error('Usuario "'+login+'" no encontrado');
-  if(statusEl) statusEl.textContent='\u2713 @'+user.login+' encontrado. Descargando\u2026';
+  if(statusEl) statusEl.textContent='✓ @'+user.login+' encontrado. Descargando…';
   currentUser={login:user.login,name:user.name||user.login,icon:user.icon||null};
   const PER_PAGE=200; const newSeen={}; let page=1,total=null;
   while(true){
     const res=await fetch(API+'/observations/species_counts?user_login='+encodeURIComponent(user.login)+'&per_page='+PER_PAGE+'&page='+page+'&locale=es');
-    if(!res.ok) break;
-    const data=await res.json();
+    if(!res.ok) break; const data=await res.json();
     if(total===null) total=data.total_results||0;
-    const results=data.results||[];
-    if(!results.length) break;
+    const results=data.results||[]; if(!results.length) break;
     results.forEach(r=>{ const t=r.taxon; newSeen[t.id]={id:t.id,name:t.name,common:t.preferred_common_name||'',photo:t.default_photo?.medium_url||null,inatUrl:'https://www.inaturalist.org/taxa/'+t.id,ancestor_ids:t.ancestor_ids||[],count:r.count}; });
-    if(statusEl) statusEl.textContent='Cargando\u2026 '+Object.keys(newSeen).length+(total?' / '+total:'')+' especies';
+    if(statusEl) statusEl.textContent='Cargando… '+Object.keys(newSeen).length+(total?' / '+total:'')+' especies';
     if(total!==null&&Object.keys(newSeen).length>=total) break;
     if(results.length<PER_PAGE) break;
     page++; await new Promise(r=>setTimeout(r,100));
   }
   seenCache=newSeen;
-  if(statusEl) statusEl.textContent='\u2713 '+Object.keys(seenCache).length+' especies sincronizadas';
+  if(statusEl) statusEl.textContent='✓ '+Object.keys(seenCache).length+' especies sincronizadas';
 }
 
-// MY SPECIES
-const TAXON_GROUPS=[{id:26036,name:'Reptiles',icon:'\ud83e\udd8e'},{id:3,name:'Aves',icon:'\ud83e\udd85'},{id:40151,name:'Mam\u00edferos',icon:'\ud83e\udd81'},{id:20978,name:'Anfibios',icon:'\ud83d\udc38'},{id:47119,name:'Ar\u00e1cnidos',icon:'\ud83d\udd77\ufe0f'},{id:47158,name:'Insectos',icon:'\ud83e\udd8b'},{id:47178,name:'Peces',icon:'\ud83d\udc20'},{id:47126,name:'Plantas',icon:'\ud83c\udf3f'},{id:47170,name:'Hongos',icon:'\ud83c\udf44'}];
-function getGroupForSpecies(sp){ const ancestors=sp.ancestor_ids||[]; for(const g of TAXON_GROUPS){ if(ancestors.includes(g.id)) return g; } return {id:0,name:'Otros',icon:'\ud83d\udd2c'}; }
+const TAXON_GROUPS=[{id:26036,name:'Reptiles',icon:'🦎'},{id:3,name:'Aves',icon:'🦅'},{id:40151,name:'Mamíferos',icon:'🦁'},{id:20978,name:'Anfibios',icon:'🐸'},{id:47119,name:'Arácnidos',icon:'🕷️'},{id:47158,name:'Insectos',icon:'🦋'},{id:47178,name:'Peces',icon:'🐠'},{id:47126,name:'Plantas',icon:'🌿'},{id:47170,name:'Hongos',icon:'🍄'}];
+function getGroupForSpecies(sp){ const ancestors=sp.ancestor_ids||[]; for(const g of TAXON_GROUPS){ if(ancestors.includes(g.id)) return g; } return {id:0,name:'Otros',icon:'🔬'}; }
 function showMySpecies(){ if(!currentUser){ showInatLoginPrompt(); return; } pushNav('Mis especies',()=>renderMySpecies()); }
 function renderMySpecies(){
   const species=Object.values(seenCache).sort((a,b)=>a.name.localeCompare(b.name));
   const m=document.getElementById('main');
-  m.innerHTML='<div class="level-header"><div><div class="level-rank">iNaturalist</div><div class="level-title">\ud83d\udc41 @'+(currentUser?.login||'')+'</div></div><div class="level-sub">'+species.length+' especies observadas</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:.75rem;flex:1">Observaciones verificadas</span><button id="resyncBtn" style="padding:6px 14px;background:none;border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:.73rem">\u21ba Actualizar</button><button id="logoutBtn" style="padding:6px 14px;background:none;border:1px solid var(--dim);color:var(--dim);border-radius:6px;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:.73rem">Cerrar sesi\u00f3n</button></div>'+(species.length===0?'<div style="text-align:center;padding:60px 20px;color:var(--muted);font-family:\'DM Mono\',monospace">No se encontraron observaciones</div>':'<div id="myGroupsContainer"></div>');
-  document.getElementById('resyncBtn')?.addEventListener('click',async()=>{ const btn=document.getElementById('resyncBtn'); btn.textContent='\u2026'; btn.disabled=true; try{ await syncInatUser(currentUser.login,null); saveLocal(); updateSeenCounter(); renderMySpecies(); }catch(e){ btn.textContent='\u2717'; setTimeout(()=>{ btn.textContent='\u21ba Actualizar'; btn.disabled=false; },2000); } });
-  document.getElementById('logoutBtn')?.addEventListener('click',()=>{ if(confirm('\u00bfCerrar sesi\u00f3n de @'+currentUser.login+'?')){ currentUser=null; seenCache={}; saveLocal(); updateAuthUI(); updateSeenCounter(); navStack.length=0; history.replaceState({depth:0},'',''); repaint(); } });
+  m.innerHTML='<div class="level-header"><div><div class="level-rank">iNaturalist</div><div class="level-title">👁 @'+(currentUser?.login||'')+'</div></div><div class="level-sub">'+species.length+' especies observadas</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="color:var(--muted);font-family:\'DM Mono\',monospace;font-size:.75rem;flex:1">Observaciones verificadas</span><button id="resyncBtn" style="padding:6px 14px;background:none;border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:.73rem">↺ Actualizar</button><button id="logoutBtn" style="padding:6px 14px;background:none;border:1px solid var(--dim);color:var(--dim);border-radius:6px;cursor:pointer;font-family:\'DM Mono\',monospace;font-size:.73rem">Cerrar sesión</button></div>'+(species.length===0?'<div style="text-align:center;padding:60px 20px;color:var(--muted);font-family:\'DM Mono\',monospace">No se encontraron observaciones</div>':'<div id="myGroupsContainer"></div>');
+  document.getElementById('resyncBtn')?.addEventListener('click',async()=>{ const btn=document.getElementById('resyncBtn'); btn.textContent='…'; btn.disabled=true; try{ await syncInatUser(currentUser.login,null); saveLocal(); updateSeenCounter(); renderMySpecies(); }catch(e){ btn.textContent='✗'; setTimeout(()=>{ btn.textContent='↺ Actualizar'; btn.disabled=false; },2000); } });
+  document.getElementById('logoutBtn')?.addEventListener('click',()=>{ if(confirm('¿Cerrar sesión de @'+currentUser.login+'?')){ currentUser=null; seenCache={}; saveLocal(); updateAuthUI(); updateSeenCounter(); navStack.length=0; history.replaceState({depth:0},'',''); repaint(); } });
   if(!species.length) return;
   const groups={}; species.forEach(sp=>{ const g=getGroupForSpecies(sp); if(!groups[g.name]) groups[g.name]={...g,species:[]}; groups[g.name].species.push(sp); });
-  const orderedGroups=[...TAXON_GROUPS.map(g=>groups[g.name]).filter(Boolean),...(groups['Otros']?[groups['Otros']]:[])] ;
+  const orderedGroups=[...TAXON_GROUPS.map(g=>groups[g.name]).filter(Boolean),...(groups['Otros']?[groups['Otros']]:[])];
   const container=document.getElementById('myGroupsContainer');
   orderedGroups.forEach(group=>{
     const header=document.createElement('div'); header.style.cssText='display:flex;align-items:center;gap:10px;margin:28px 0 14px';
@@ -980,13 +921,12 @@ function renderMySpecies(){
   });
 }
 
-// ALL SPECIES OVERLAY
 const spOverlay=document.getElementById('spOverlay'),spOverlayBody=document.getElementById('spOverlayBody'),spOverlayTitle=document.getElementById('spOverlayTitle'),spOverlayRank=document.getElementById('spOverlayRank'),spOverlayMeta=document.getElementById('spOverlayMeta');
 let spState={taxonId:null,taxonName:'',taxonRank:'',page:1,total:null,loaded:[],done:false,loading:false};
 
 (function(){
   const s=document.createElement('style');
-  s.textContent='.sp-overlay-open{opacity:1!important;pointer-events:all!important}.sp-load-more-wrap{text-align:center;padding:24px 0 8px}.sp-load-more-btn{padding:10px 28px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);background:rgba(126,231,135,.06);font-family:\'DM Mono\',monospace;font-size:.78rem;cursor:pointer;transition:all .2s}.sp-load-more-btn:hover{background:rgba(126,231,135,.14)}.sp-load-more-btn:disabled{opacity:.5;cursor:default}.sp-load-done{text-align:center;padding:20px 0;font-family:\'DM Mono\',monospace;font-size:.7rem;color:var(--dim)}.sp-overlay-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;font-family:\'DM Mono\',monospace;font-size:.82rem;color:var(--muted)}.sp-overlay-grid .dense-cell{width:160px}.sp-overlay-grid .dense-img-wrap{width:160px;height:130px}.sp-overlay-grid .dense-sci{font-size:.72rem}.sp-overlay-grid .dense-com{font-size:.65rem}.sp-overlay-grid .dense-info{padding:6px 8px 8px}.sp-overlay-grid .dense-actions{opacity:1}@media(max-width:768px){.sp-overlay-grid .dense-cell{width:130px}.sp-overlay-grid .dense-img-wrap{width:130px;height:106px}}';
+  s.textContent='.sp-load-more-wrap{text-align:center;padding:24px 0 8px}.sp-load-more-btn{padding:10px 28px;border-radius:8px;border:1px solid var(--accent);color:var(--accent);background:rgba(126,231,135,.06);font-family:\'DM Mono\',monospace;font-size:.78rem;cursor:pointer;transition:all .2s}.sp-load-more-btn:hover{background:rgba(126,231,135,.14)}.sp-load-more-btn:disabled{opacity:.5;cursor:default}.sp-load-done{text-align:center;padding:20px 0;font-family:\'DM Mono\',monospace;font-size:.7rem;color:var(--dim)}.sp-overlay-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;font-family:\'DM Mono\',monospace;font-size:.82rem;color:var(--muted)}.sp-overlay-grid .dense-cell{width:200px}.sp-overlay-grid .dense-img-wrap{width:200px;height:160px}.sp-overlay-grid .dense-sci{font-size:.78rem}.sp-overlay-grid .dense-com{font-size:.68rem}.sp-overlay-grid .dense-info{padding:7px 9px 9px}.sp-overlay-grid .dense-actions{opacity:1}@media(max-width:768px){.sp-overlay-grid .dense-cell{width:160px}.sp-overlay-grid .dense-img-wrap{width:160px;height:130px}}';
   document.head.appendChild(s);
 })();
 
@@ -994,10 +934,10 @@ function openAllSpeciesOverlay(taxonId,taxonName,taxonRank){
   spState={taxonId,taxonName,taxonRank,page:1,total:null,loaded:[],done:false,loading:false};
   spOverlay.style.opacity='1'; spOverlay.style.pointerEvents='all';
   document.body.style.overflow='hidden';
-  spOverlayTitle.textContent=taxonName;
-  spOverlayRank.textContent=RANK_ES[taxonRank]||taxonRank;
-  spOverlayMeta.textContent=activePlaceName?'\ud83d\udccd '+activePlaceName:'';
-  spOverlayBody.innerHTML='<div class="sp-overlay-loading"><div class="spinner"></div><div>Cargando\u2026</div></div>';
+  history.pushState({depth:navStack.length,overlay:true},'','');
+  spOverlayTitle.textContent=taxonName; spOverlayRank.textContent=RANK_ES[taxonRank]||taxonRank;
+  spOverlayMeta.textContent=activePlaceName?'📍 '+activePlaceName:'';
+  spOverlayBody.innerHTML='<div class="sp-overlay-loading"><div class="spinner"></div><div>Cargando…</div></div>';
   spLoadNextPage();
 }
 function closeAllSpeciesOverlay(){ spState.loading=false; spOverlay.style.opacity='0'; spOverlay.style.pointerEvents='none'; document.body.style.overflow=''; }
@@ -1023,7 +963,7 @@ async function spLoadNextPage(){
 
 async function spRenderAll(){
   const totalLoaded=spState.loaded.length;
-  spOverlayMeta.textContent=totalLoaded.toLocaleString()+(spState.total?' de '+spState.total.toLocaleString():'')+' especies'+(activePlaceName?' \u00b7 \ud83d\udccd '+activePlaceName:'');
+  spOverlayMeta.textContent=totalLoaded.toLocaleString()+(spState.total?' de '+spState.total.toLocaleString():'')+' especies'+(activePlaceName?' · 📍 '+activePlaceName:'');
   if(!totalLoaded){ spOverlayBody.innerHTML='<div class="sp-overlay-loading" style="color:var(--muted)">No se encontraron especies</div>'; return; }
   await enrichFamilies(spState.loaded);
   const byFamily={};
@@ -1036,7 +976,7 @@ async function spRenderAll(){
     const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
     const famBlock=document.createElement('div'); famBlock.className='family-block';
     const famHdr=document.createElement('div'); famHdr.className='family-header';
-    famHdr.innerHTML='<span class="family-header-name">Familia '+fam+'</span><span class="family-header-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span>';
+    famHdr.innerHTML='<span class="family-header-name">Familia '+fam+'</span><span class="family-header-count">'+totalSp+' sp. · '+genera.length+' gén.</span>';
     famBlock.appendChild(famHdr);
     genera.forEach(genus=>{
       const spp=byFamily[fam][genus];
@@ -1045,26 +985,21 @@ async function spRenderAll(){
       genHdr.innerHTML='<span class="genus-header-name">'+genus+'</span><span class="genus-header-count">'+spp.length+' sp.</span>';
       const grid=document.createElement('div'); grid.className='dense-grid';
       spp.forEach(sp=>grid.appendChild(makeDenseCell(sp)));
-      genBlock.appendChild(genHdr); genBlock.appendChild(grid);
-      famBlock.appendChild(genBlock);
+      genBlock.appendChild(genHdr); genBlock.appendChild(grid); famBlock.appendChild(genBlock);
     });
     wrap.appendChild(famBlock);
   });
   spOverlayBody.innerHTML=''; spOverlayBody.appendChild(wrap);
-  if(!spState.done){ const d=document.createElement('div'); d.className='sp-load-more-wrap'; d.innerHTML='<button class="sp-load-more-btn" id="spLoadMoreBtn">Cargar m\u00e1s</button>'; spOverlayBody.appendChild(d); document.getElementById('spLoadMoreBtn').addEventListener('click',()=>{ document.getElementById('spLoadMoreBtn').disabled=true; spLoadNextPage(); }); }
-  else { const d=document.createElement('div'); d.className='sp-load-done'; d.textContent='\u2713 '+totalLoaded.toLocaleString()+' especies'; spOverlayBody.appendChild(d); }
+  if(!spState.done){ const d=document.createElement('div'); d.className='sp-load-more-wrap'; d.innerHTML='<button class="sp-load-more-btn" id="spLoadMoreBtn">Cargar más</button>'; spOverlayBody.appendChild(d); document.getElementById('spLoadMoreBtn').addEventListener('click',()=>{ document.getElementById('spLoadMoreBtn').disabled=true; spLoadNextPage(); }); }
+  else { const d=document.createElement('div'); d.className='sp-load-done'; d.textContent='✓ '+totalLoaded.toLocaleString()+' especies'; spOverlayBody.appendChild(d); }
 }
 
-// PDF
 document.getElementById('spPdfBtn').addEventListener('click',async()=>{
   const btn=document.getElementById('spPdfBtn'); if(btn.disabled) return;
-  btn.disabled=true; btn.textContent='\u23f3';
-  try{
-    const allSpecies=spState.loaded||[];
-    if(!allSpecies.length){ alert('No hay especies cargadas.'); return; }
-    openPrintPage(allSpecies,spState.taxonName||'Tax\u00f3n',activePlaceName||'');
-  }catch(e){ alert('Error: '+e.message); }
-  finally{ btn.disabled=false; btn.innerHTML='\ud83d\udcc4 <span class="pdf-label">PDF</span>'; }
+  btn.disabled=true; btn.textContent='⏳';
+  try{ const allSpecies=spState.loaded||[]; if(!allSpecies.length){ alert('No hay especies cargadas.'); return; } openPrintPage(allSpecies,spState.taxonName||'Taxón',activePlaceName||''); }
+  catch(e){ alert('Error: '+e.message); }
+  finally{ btn.disabled=false; btn.innerHTML='📄 <span class="pdf-label">PDF</span>'; }
 });
 
 async function openPrintPage(species,taxonName,regionName){
@@ -1079,25 +1014,18 @@ async function openPrintPage(species,taxonName,regionName){
     const genera=Object.keys(byFamily[fam]).sort();
     const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
     const genusBlocks=genera.map(genus=>{
-      const spp=byFamily[fam][genus];
-      const cols=Math.min(spp.length,4);
-      const cells=spp.map(sp=>{
-        const img=sp.photo?'<img src="'+sp.photo.replace('/square.','/medium.').replace('/small.','/medium.')+'" loading="eager">':'<div class="no-img">\ud83d\udcf7</div>';
-        return '<div class="sp-cell"><div class="sp-img-wrap">'+img+'</div><div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'+(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')+'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div></div>';
-      }).join('');
+      const spp=byFamily[fam][genus]; const cols=Math.min(spp.length,4);
+      const cells=spp.map(sp=>{ const img=sp.photo?'<img src="'+sp.photo.replace('/square.','/medium.').replace('/small.','/medium.')+'" loading="eager">':'<div class="no-img">📷</div>'; return '<div class="sp-cell"><div class="sp-img-wrap">'+img+'</div><div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'+(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')+'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div></div>'; }).join('');
       return '<div class="genus-block"><div class="genus-banner"><span class="genus-name">'+genus+'</span><span class="genus-count">'+spp.length+' sp.</span></div><div class="sp-grid" style="grid-template-columns:repeat('+cols+',32mm)">'+cells+'</div></div>';
     }).join('');
-    return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
+    return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. · '+genera.length+' gén.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
   }).join('');
-
-  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+taxonName+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d1117;font-family:Arial,sans-serif;color:#e6edf3;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #30363d}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#e6edf3}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#484f58}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#161b22;border-left:4px solid #58a6ff;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#58a6ff;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#484f58}.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}.genus-block{display:inline-flex;flex-direction:column;gap:0;break-inside:avoid}.genus-banner{display:flex;align-items:center;gap:5px;background:#161b22;border-top:2px solid #7ee787;padding:3px 5px 3px 6px;width:100%}.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#7ee787;font-weight:bold;white-space:nowrap}.genus-count{font-family:monospace;font-size:5.5pt;color:#484f58}.sp-grid{display:grid;gap:1px;background:#0d1117}.sp-cell{background:#0d1117;overflow:hidden;width:32mm}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#161b22}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#30363d;font-size:16pt}.sp-txt{background:#0d1117;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#7ee787;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#8b949e;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-obs{font-family:monospace;font-size:4.2pt;color:#30363d;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#0d1117!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}</style></head><body><div style="position:fixed;inset:0;background:#0d1117;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div class="page-header"><span class="title">'+taxonName+(regionName?' \u00b7 '+regionName:'')+'</span><span class="meta">'+sorted.length+' especies \u00b7 BioExplorer</span></div>'+familySections+'<scr'+'ipt>const imgs=Array.from(document.querySelectorAll("img"));let pending=imgs.filter(i=>!i.complete||!i.naturalWidth).length;const tryPrint=()=>{pending--;if(pending<=0)doPrint();};const doPrint=()=>{window.focus();window.print();};if(pending===0){setTimeout(doPrint,300);}else{imgs.forEach(img=>{if(!img.complete||!img.naturalWidth){img.onload=tryPrint;img.onerror=tryPrint;}});setTimeout(doPrint,8000);}<\/scr'+'ipt></body></html>';
-
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+taxonName+'</title><style>*{box-sizing:border-box;margin:0;padding:0}body{background:#0d1117;font-family:Arial,sans-serif;color:#e6edf3;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #30363d}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#e6edf3}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#484f58}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#161b22;border-left:4px solid #58a6ff;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#58a6ff;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#484f58}.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}.genus-block{display:inline-flex;flex-direction:column;gap:0;break-inside:avoid}.genus-banner{display:flex;align-items:center;gap:5px;background:#161b22;border-top:2px solid #7ee787;padding:3px 5px 3px 6px;width:100%}.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#7ee787;font-weight:bold;white-space:nowrap}.genus-count{font-family:monospace;font-size:5.5pt;color:#484f58}.sp-grid{display:grid;gap:1px;background:#0d1117}.sp-cell{background:#0d1117;overflow:hidden;width:32mm}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#161b22}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#30363d;font-size:16pt}.sp-txt{background:#0d1117;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#7ee787;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#8b949e;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-obs{font-family:monospace;font-size:4.2pt;color:#30363d;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#0d1117!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}</style></head><body><div style="position:fixed;inset:0;background:#0d1117;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div class="page-header"><span class="title">'+taxonName+(regionName?' · '+regionName:'')+'</span><span class="meta">'+sorted.length+' especies · BioExplorer</span></div>'+familySections+'<scr'+'ipt>const imgs=Array.from(document.querySelectorAll("img"));let pending=imgs.filter(i=>!i.complete||!i.naturalWidth).length;const tryPrint=()=>{pending--;if(pending<=0)doPrint();};const doPrint=()=>{window.focus();window.print();};if(pending===0){setTimeout(doPrint,300);}else{imgs.forEach(img=>{if(!img.complete||!img.naturalWidth){img.onload=tryPrint;img.onerror=tryPrint;}});setTimeout(doPrint,8000);}<\/scr'+'ipt></body></html>';
   const win=window.open('','_blank');
   if(!win){ alert('Permite las ventanas emergentes para generar el PDF.'); return; }
   win.document.write(html); win.document.close();
 }
 
-// INIT
 loadLocal();
 document.getElementById('authBtn').addEventListener('click',handleAuth);
 document.getElementById('mySpeciesBtn').addEventListener('click',showMySpecies);
