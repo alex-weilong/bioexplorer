@@ -45,13 +45,21 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .tc-pill{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted);background:var(--surface2);padding:2px 7px;border-radius:99px}
 .kingdom-grid{display:flex;gap:12px;animation:fadeUp .3s ease both;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .kingdom-grid::-webkit-scrollbar{display:none}
-.kingdom-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;cursor:pointer;transition:all .22s;overflow:hidden;position:relative;display:flex;flex-direction:row;align-items:center;flex:1;min-width:160px;gap:0}
-.kingdom-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.45)}
-.kingdom-icon-wrap{flex-shrink:0;width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--surface2);border-right:1px solid var(--border);transition:background .22s}
-.kingdom-card:hover .kingdom-icon-wrap{background:rgba(126,231,135,.06)}
-.kingdom-img-wrap{flex-shrink:0;width:72px;height:72px;overflow:hidden;background:var(--surface2);border-right:1px solid var(--border)}
-.kingdom-img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
-.kingdom-card:hover .kingdom-img{transform:scale(1.1)}
+.kingdom-card{position:relative;border-radius:14px;cursor:pointer;overflow:hidden;transition:all .25s;aspect-ratio:3/4;background:var(--surface2)}
+.kingdom-card:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 16px 40px rgba(0,0,0,.55);z-index:2}
+.kc-img-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s}
+.kingdom-card:hover .kc-img-bg{transform:scale(1.07)}
+.kc-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,17,23,.92) 35%,rgba(13,17,23,.15) 100%)}
+.kc-body{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px}
+.kc-icon{font-size:2rem;margin-bottom:6px;line-height:1}
+.kc-name{font-family:'Playfair Display',serif;font-style:italic;font-size:1.15rem;font-weight:700;color:#e6edf3;line-height:1.2;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+.kc-common{font-size:.68rem;color:rgba(230,237,243,.65);margin-top:3px;font-family:'DM Mono',monospace}
+.kc-hint{font-size:.62rem;color:var(--accent);font-family:'DM Mono',monospace;margin-top:8px;opacity:0;transition:opacity .2s}
+.kingdom-card:hover .kc-hint{opacity:1}
+.home-header{margin-bottom:20px}
+.home-title{font-family:'Playfair Display',serif;font-style:italic;font-size:1.7rem;font-weight:700;color:var(--text)}
+.home-sub{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:5px}
+.kingdom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 .kingdom-body{padding:12px 16px;display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
 .kingdom-badge{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
 .kingdom-name{font-family:'Playfair Display',serif;font-style:italic;font-size:1.05rem;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -80,7 +88,7 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .place-dropdown.open{display:block}
 .place-result{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border);font-size:.82rem}
 .place-result:last-child{border-bottom:none}
-.place-result:hover,.place-result.focused{background:var(--surface2)}
+.place-result:hover,.place-result.focused{background:var(--surface2)}.place-result.place-top{border-left:3px solid var(--accent2);background:rgba(88,166,255,.04)}
 .pr-icon{font-size:1rem;flex-shrink:0}
 .pr-name{flex:1;color:var(--text)}
 .pr-type{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--dim);text-transform:uppercase}
@@ -196,10 +204,11 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .genus-header-name{font-family:'Playfair Display',serif;font-style:italic;font-size:.8rem;color:var(--accent);font-weight:600}
 .genus-header-count{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--dim)}
 .dense-grid{display:flex;flex-wrap:wrap;gap:4px;margin-left:6px}
-.dense-cell{width:160px;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
+.dense-cell{width:121px;background:var(--surface);border:1px solid var(--border);border-radius:5px;overflow:hidden;cursor:pointer;transition:all .18s;position:relative;flex-shrink:0}
 .dense-cell:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,.5);z-index:2}
 .dense-cell.seen-card{border-color:rgba(126,231,135,.4)}
-.dense-img-wrap{width:160px;height:130px;overflow:hidden;background:var(--surface2);position:relative}
+.dense-img-wrap{width:121px;height:121px;overflow:hidden;background:var(--surface2);position:relative}
+.leaflet-container{background:#c8d5c5!important;margin:0!important}
 .dense-img{width:100%;height:100%;object-fit:cover;transition:transform .35s;display:block}
 .dense-cell:hover .dense-img{transform:scale(1.08)}
 .dense-no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--dim)}
@@ -228,7 +237,7 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-@media(max-width:768px){header{padding:0 12px}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{gap:8px}.kingdom-card{min-width:140px}.kingdom-icon-wrap,.kingdom-img-wrap{width:56px;height:56px}.kingdom-icon-wrap{font-size:1.7rem}.kingdom-body{padding:10px 12px}.kingdom-name{font-size:.9rem}.kingdom-common,.kingdom-hint,.kingdom-arrow{display:none}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:90px}.dense-img-wrap{width:90px;height:73px}.dense-actions{opacity:1}.sp-overlay-grid .dense-cell{width:140px}.sp-overlay-grid .dense-img-wrap{width:140px;height:114px}}
+@media(max-width:768px){header{padding:0 12px}#spOverlayHdr{padding:5px 12px!important;gap:7px!important}#spOverlayMeta{display:none!important}.pdf-export-btn{padding:5px 9px!important;font-size:.7rem!important;flex-shrink:0}.header-inner{height:54px;gap:8px}.logo{font-size:1rem}.src-badge{display:none}.search-wrap{max-width:none;flex:1}.search-input,.place-input{font-size:16px}.search-dropdown{position:fixed;top:106px;left:0;right:0;border-radius:0 0 12px 12px;max-height:60vh;overflow-y:auto;z-index:500;min-width:unset}.breadcrumb{font-size:.72rem;gap:2px}.crumb{padding:2px 5px;max-width:100px;overflow:hidden;text-overflow:ellipsis}main{padding:20px 16px 80px}.level-header{margin-bottom:20px;gap:8px}.level-title{font-size:1.6rem}.card-grid{grid-template-columns:1fr 1fr;gap:10px}.kingdom-grid{grid-template-columns:repeat(2,1fr);gap:8px}.kc-name{font-size:1rem}.kc-common{display:none}.home-title{font-size:1.3rem}.modal-overlay{padding:0;align-items:flex-end}.modal{max-width:100%;max-height:92vh;border-radius:20px 20px 0 0;border-bottom:none;transform:translateY(20px)}.modal-overlay.open .modal{transform:translateY(0)}.modal-handle{display:block}.modal-body{padding:20px 16px 32px}.modal-sci{font-size:1.4rem}.filter-bar{padding:0 12px;top:54px}.filter-inner{height:52px;gap:6px}.filter-label,.filter-divider{display:none}.place-wrap{max-width:none;flex:1;overflow:visible}.place-dropdown{position:fixed;left:0;right:0;top:106px;border-radius:0 0 12px 12px;max-height:75vh;overflow-y:auto;z-index:300}.dense-cell{width:90px}.dense-img-wrap{width:90px;height:73px}.dense-actions{opacity:1}.sp-overlay-grid .dense-cell{width:110px}.sp-overlay-grid .dense-img-wrap{width:110px;height:110px}}
 @media(max-width:380px){.dense-cell{width:80px}.dense-img-wrap{width:80px;height:65px}}
 </style>
 </head>
@@ -285,13 +294,14 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
   </div>
 </div>
 <div id="spOverlay" style="position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .22s">
-  <div style="position:sticky;top:0;z-index:10;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 40px;height:58px;display:flex;align-items:center;gap:16px">
+  <div style="position:sticky;top:0;z-index:10;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:6px 16px;min-height:52px;display:flex;align-items:center;gap:10px;flex-wrap:wrap" id="spOverlayHdr">
     <div style="flex:1;min-width:0">
       <div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:2px" id="spOverlayRank"></div>
       <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;font-weight:700" id="spOverlayTitle"></div>
     </div>
     <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);flex-shrink:0" id="spOverlayMeta"></div>
     <button class="pdf-export-btn" id="spPdfBtn">&#128196; <span class="pdf-label">PDF</span></button>
+    <button class="pdf-export-btn" id="spListBtn" style="border-color:var(--accent);color:var(--accent)">&#128200; <span>Distribución</span></button>
     <button id="spOverlayClose" style="width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
   </div>
   <div id="spOverlayBody" style="flex:1;overflow-y:auto;padding:28px 40px 60px"></div>
@@ -301,11 +311,11 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 <script>
 const API = 'https://api.inaturalist.org/v1';
 const KINGDOMS = [
-  { id:'animalia', name:'Animalia', common:'Reino Animal', icon:'🐾', taxonId:1, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg' },
-  { id:'plantae', name:'Plantae', common:'Reino Vegetal', icon:'🌿', taxonId:47126, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg' },
-  { id:'fungi', name:'Fungi', common:'Reino Fungi', icon:'🍄', taxonId:47170, hint:'explorar filos →', photo:null },
-  { id:'chromista', name:'Chromista', common:'Algas y similares', icon:'🌊', taxonId:48222, hint:'explorar filos →', photo:null },
-  { id:'protozoa', name:'Protozoa', common:'Protozoos', icon:'🔬', taxonId:47686, hint:'explorar filos →', photo:null },
+  { id:'animalia', name:'Animalia', common:'Reino Animal', icon:'🦊', taxonId:1, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/225047126/medium.jpg', color:'#2d6a4f' },
+  { id:'plantae', name:'Plantae', common:'Reino Vegetal', icon:'🌿', taxonId:47126, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/274532432/medium.jpg', color:'#3a7d44' },
+  { id:'fungi', name:'Fungi', common:'Reino Fungi', icon:'🍄', taxonId:47170, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/109319270/medium.jpg', color:'#8b5e3c' },
+  { id:'chromista', name:'Chromista', common:'Algas y similares', icon:'🌊', taxonId:48222, hint:'explorar filos →', photo:'https://inaturalist-open-data.s3.amazonaws.com/photos/12435/medium.jpg', color:'#1d6fa4' },
+  { id:'protozoa', name:'Protozoa', common:'Protozoos', icon:'🔬', taxonId:47686, hint:'explorar filos →', photo:null, color:'#6b4c9a' },
 ];
 const RANK_ES = { kingdom:'Reino',phylum:'Filo',class:'Clase',order:'Orden',family:'Familia',genus:'Género',species:'Especie',subspecies:'Subespecie',stateofmatter:'Estado',subkingdom:'Subreino',superphylum:'Superfilo',subphylum:'Subfilo',superclass:'Superclase',subclass:'Subclase',superorder:'Superorden',suborder:'Suborden',superfamily:'Superfamilia',subfamily:'Subfamilia',tribe:'Tribu',subgenus:'Subgénero' };
 const RANK_ICONS = { kingdom:'🌍',phylum:'🔬',class:'📦',order:'📋',family:'🏠',genus:'🔤',species:'🌿',subspecies:'🔬' };
@@ -361,7 +371,7 @@ window.addEventListener('popstate',()=>{
 history.replaceState({depth:0},'','');
 
 // CACHE
-let activePlaceId=null,activePlaceName='';
+let activePlaceId=null,activePlaceName='',activePlaceBbox=null;
 const cache={};
 function clearCache(){ Object.keys(cache).forEach(k=>delete cache[k]); }
 
@@ -423,24 +433,24 @@ async function cachedSpecies(parentId){
 }
 async function fetchPlaceCount(taxonId){
   const k='pc_'+taxonId+'_'+activePlaceId;
-  if(!cache[k]) cache[k]=fetch(API+'/observations/species_counts?taxon_id='+taxonId+'&place_id='+activePlaceId+'&verifiable=true&captive=false&per_page=1').then(r=>r.ok?r.json():null).then(d=>d?.total_results??0).catch(()=>0);
+  if(!cache[k]) cache[k]=fetch(API+'/observations/species_counts?taxon_id='+taxonId+'&place_id='+activePlaceId+'&verifiable=true&captive=false&per_page=1').then(r=>r.ok?r.json():null).then(d=>d&&d.total_results?d.total_results:0).catch(()=>0);
   return cache[k];
 }
 
 // HOME
 function renderHome(){
   const m=document.getElementById('main');
-  m.innerHTML='<div class="level-header"><div><div class="level-rank">Clasificación</div><div class="level-title">Reinos de la vida</div></div><div class="level-sub">Reino → Filo → Clase → Orden → Familia → Género → Especie</div></div><div class="kingdom-grid" id="kingdomGrid"></div>';
+  m.innerHTML='<div class="home-header"><div class="home-title">BioExplorer</div><div class="home-sub">Reino → Filo → Clase → Orden → Familia → Género → Especie</div></div><div class="kingdom-grid" id="kingdomGrid"></div>';
   const grid=document.getElementById('kingdomGrid');
   KINGDOMS.forEach(k=>{
     const card=document.createElement('div'); card.className='kingdom-card';
-    const media=document.createElement('div');
-    if(k.photo){ media.className='kingdom-img-wrap'; const img=document.createElement('img'); img.className='kingdom-img'; img.src=k.photo; img.alt=k.name; img.loading='lazy'; media.appendChild(img); }
-    else { media.className='kingdom-icon-wrap'; media.textContent=k.icon; }
-    const body=document.createElement('div'); body.className='kingdom-body';
-    body.innerHTML='<div class="kingdom-badge">Reino</div><div class="kingdom-name">'+k.icon+' '+k.name+'</div><div class="kingdom-common">'+k.common+'</div><div class="kingdom-hint">'+k.hint+'</div>';
-    const arrow=document.createElement('div'); arrow.className='kingdom-arrow'; arrow.textContent='→';
-    card.appendChild(media); card.appendChild(body); card.appendChild(arrow);
+    const imgBg=document.createElement('div'); imgBg.className='kc-img-bg';
+    if(k.photo){ imgBg.style.backgroundImage='url('+k.photo+')'; }
+    else { imgBg.style.background='linear-gradient(135deg,'+k.color+'33,'+k.color+'66)'; }
+    const overlay=document.createElement('div'); overlay.className='kc-overlay';
+    const body=document.createElement('div'); body.className='kc-body';
+    body.innerHTML='<div class="kc-icon">'+k.icon+'<\/div><div class="kc-name">'+k.name+'<\/div><div class="kc-common">'+k.common+'<\/div><div class="kc-hint">'+k.hint+'<\/div>';
+    card.appendChild(imgBg); card.appendChild(overlay); card.appendChild(body);
     card.addEventListener('click',()=>enterTaxon(k.taxonId,k.name,'kingdom'));
     grid.appendChild(card);
   });
@@ -608,6 +618,29 @@ function makeDenseCell(sp){
   cell.addEventListener('click',()=>openModal(sp));
   return cell;
 }
+const _dmaps={};
+function initDenseMaps(wrapEl){
+  if(!window.L) return;
+  const divs=wrapEl.querySelectorAll('.dense-map-wrap');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const wrap=entry.target; const id=wrap.dataset.taxonId;
+      if(_dmaps[id]) return;
+      _dmaps[id]=true; obs.unobserve(wrap);
+      const el=wrap.querySelector('.dense-map-el'); if(!el) return;
+      const lmap=L.map(el,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,touchZoom:false,keyboard:false});
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(lmap);
+      L.tileLayer('https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?taxon_id='+id+'&color=%232d9e45&quality_grade=research&captive=false'+(activePlaceId?'&place_id='+activePlaceId:''),{maxZoom:19,opacity:0.9}).addTo(lmap);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,opacity:0.65}).addTo(lmap);
+      if(activePlaceBbox){try{lmap.fitBounds(activePlaceBbox,{animate:false});}catch(e){lmap.setView([20,0],2);}}
+      else{lmap.setView([20,0],2);}
+      setTimeout(()=>lmap.invalidateSize(),80);
+    });
+  },{rootMargin:'200px'});
+  divs.forEach(d=>obs.observe(d));
+}
+
 
 // MAP POPOVER
 let popoverMap=null,popoverSpId=null;
@@ -659,7 +692,7 @@ async function openMapPopover(sp,triggerEl){
       if(!obs.length||!popoverMap) return;
       const latlngs=obs.map(o=>{ const p=o.location.split(','); return [parseFloat(p[0]),parseFloat(p[1])]; }).filter(p=>!isNaN(p[0])&&!isNaN(p[1]));
       if(!latlngs.length) return;
-      try{ popoverMap.fitBounds(L.latLngBounds(latlngs).pad(0.15),{maxZoom:6}); }catch(e){}
+      try{ popoverMap.fitBounds(L.latLngBounds(latlngs).pad(0.35),{maxZoom:5}); }catch(e){}
     }).catch(()=>{});
 }
 function closeMapPopover(){
@@ -867,7 +900,7 @@ async function selectSearchResult(taxon){
 // PLACE FILTER
 let placeTimer=null,placeResults=[],placeFocusIndex=-1,previewMap=null,previewTimer=null;
 const PLACE_TYPE_ICONS={1:'🏳️',2:'📍',8:'🌍',9:'🏳️',10:'🌲',29:'🏳️'};
-const PLACE_TYPE_LABELS={0:'Lugar',1:'País',2:'Estado',3:'Condado',8:'Continente',9:'País',10:'Parque',12:'País',13:'Región',14:'Océano',24:'Comarca',29:'País',100:'Comunidad',101:'Condado',102:'Ciudad'};
+const PLACE_TYPE_LABELS={0:'Lugar',1:'País',2:'Estado/Provincia',3:'Condado',7:'Isla',8:'Continente',9:'País',10:'Parque/Área',12:'País',13:'Región',14:'Océano',24:'Comarca',29:'País',100:'Comunidad',101:'Condado',102:'Ciudad'};
 function ensureDropdownStructure(){ if(!document.getElementById('placeResultsList')){ placeDropdown.innerHTML='<div id="placeResultsList"></div><div class="place-preview" id="placePreviewInner"><div id="placePreviewMap"></div><div class="place-preview-label" id="placePreviewLabelInner"></div></div>'; } }
 placeInput.addEventListener('input',()=>{ const q=placeInput.value.trim(); placeClear.classList.toggle('visible',q.length>0); clearTimeout(placeTimer); if(q.length<2){ closePlaceDropdown(); return; } ensureDropdownStructure(); document.getElementById('placeResultsList').innerHTML='<div class="place-msg">Buscando\u2026</div>'; placeDropdown.classList.add('open'); placeTimer=setTimeout(()=>searchPlaces(q),350); });
 placeInput.addEventListener('keydown',e=>{ const items=placeDropdown.querySelectorAll('.place-result'); if(e.key==='ArrowDown'){ e.preventDefault(); placeFocusIndex=Math.min(placeFocusIndex+1,items.length-1); items.forEach((el,i)=>el.classList.toggle('focused',i===placeFocusIndex)); if(placeResults[placeFocusIndex]) showPreview(placeResults[placeFocusIndex]); } else if(e.key==='ArrowUp'){ e.preventDefault(); placeFocusIndex=Math.max(placeFocusIndex-1,0); items.forEach((el,i)=>el.classList.toggle('focused',i===placeFocusIndex)); if(placeResults[placeFocusIndex]) showPreview(placeResults[placeFocusIndex]); } else if(e.key==='Enter'&&placeFocusIndex>=0){ selectPlace(placeResults[placeFocusIndex]); } else if(e.key==='Escape'){ closePlaceDropdown(); placeInput.blur(); } });
@@ -875,7 +908,22 @@ placeClear.addEventListener('click',()=>{ placeInput.value=''; placeClear.classL
 document.addEventListener('click',e=>{ if(!document.getElementById('placeWrap').contains(e.target)) closePlaceDropdown(); });
 document.getElementById('activePlaceClear').addEventListener('click',clearPlaceFilter);
 function closePlaceDropdown(){ placeDropdown.classList.remove('open'); placeDropdown.innerHTML=''; placeFocusIndex=-1; placeResults=[]; if(previewMap){ previewMap.remove(); previewMap=null; } }
-async function searchPlaces(q){ try{ const res=await fetch(API+'/places/autocomplete?q='+encodeURIComponent(q)+'&per_page=8'); const data=await res.json(); placeResults=data.results||[]; renderPlaceDropdown(placeResults); }catch(e){ ensureDropdownStructure(); document.getElementById('placeResultsList').innerHTML='<div class="place-msg">Error al buscar</div>'; } }
+async function searchPlaces(q){
+  try{
+    const res=await fetch(API+'/places/autocomplete?q='+encodeURIComponent(q)+'&per_page=20');
+    const data=await res.json(); const raw=data.results||[];
+    const pri={8:0,12:0,1:0,29:0,7:1,10:1,2:2,13:2,3:3,24:3,100:3,102:4,101:4,0:5};
+    placeResults=[...raw].sort((a,b)=>{
+      const pa=pri[a.place_type]!==undefined?pri[a.place_type]:5;
+      const pb=pri[b.place_type]!==undefined?pri[b.place_type]:5;
+      return pa-pb;
+    }).slice(0,10);
+    renderPlaceDropdown(placeResults);
+  }catch(e){
+    ensureDropdownStructure();
+    document.getElementById('placeResultsList').innerHTML='<div class="place-msg">Error al buscar</div>';
+  }
+}
 function renderPlaceDropdown(results){
   placeFocusIndex=-1; ensureDropdownStructure();
   const list=document.getElementById('placeResultsList');
@@ -883,7 +931,7 @@ function renderPlaceDropdown(results){
   list.innerHTML='';
   results.forEach((place,i)=>{
     const icon=PLACE_TYPE_ICONS[place.place_type]||'📍',type=PLACE_TYPE_LABELS[place.place_type]||'Lugar';
-    const el=document.createElement('div'); el.className='place-result';
+    const el=document.createElement('div'); el.className='place-result'+(i===0?' place-top':'');
     el.innerHTML='<span class="pr-icon">'+icon+'</span><span class="pr-name">'+(place.display_name||place.name)+'</span><span class="pr-type">'+type+'</span>';
     el.addEventListener('mousedown',e=>e.preventDefault());
     el.addEventListener('mouseenter',()=>{ clearTimeout(previewTimer); previewTimer=setTimeout(()=>showPreview(place),180); });
@@ -906,7 +954,17 @@ async function showPreview(place){
   if(geojson){ try{ const geo=typeof geojson==='string'?JSON.parse(geojson):geojson; const layer=L.geoJSON(geo,{style:{color:'#58a6ff',weight:2,fillColor:'#58a6ff',fillOpacity:.18}}).addTo(previewMap); previewMap.fitBounds(layer.getBounds(),{padding:[16,16]}); }catch(e){ if(place.location){ const[lat,lng]=place.location.split(',').map(Number); if(!isNaN(lat)&&!isNaN(lng)){ previewMap.setView([lat,lng],5); L.circleMarker([lat,lng],{radius:8,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.8,weight:2}).addTo(previewMap); } } } }
   else if(place.location){ const[lat,lng]=place.location.split(',').map(Number); if(!isNaN(lat)&&!isNaN(lng)){ previewMap.setView([lat,lng],5); L.circleMarker([lat,lng],{radius:8,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.8,weight:2}).addTo(previewMap); } }
 }
-function selectPlace(place){ activePlaceId=place.id; activePlaceName=place.display_name||place.name; clearCache(); Object.keys(phenologyCache).forEach(k=>delete phenologyCache[k]); placeInput.value=''; placeClear.classList.remove('visible'); closePlaceDropdown(); activePlaceNameEl.textContent=activePlaceName; activePlaceEl.classList.add('visible'); repaint(); }
+function selectPlace(place){ activePlaceId=place.id; activePlaceName=place.display_name||place.name;
+  activePlaceBbox=null;
+  fetch(API+'/places/'+activePlaceId).then(r=>r.json()).then(d=>{
+    const p=(d.results||[])[0]; if(!p) return;
+    const bb=p.bounding_box_geojson;
+    if(bb&&bb.coordinates){
+      const c=bb.coordinates[0]; let n=90,s=-90,w=180,e=-180;
+      c.forEach(([lng,lat])=>{ if(lat<n)n=lat; if(lat>s)s=lat; if(lng<w)w=lng; if(lng>e)e=lng; });
+      activePlaceBbox=[[n,w],[s,e]];
+    }
+  }).catch(()=>{}); clearCache(); Object.keys(phenologyCache).forEach(k=>delete phenologyCache[k]); placeInput.value=''; placeClear.classList.remove('visible'); closePlaceDropdown(); activePlaceNameEl.textContent=activePlaceName; activePlaceEl.classList.add('visible'); repaint(); }
 function clearPlaceFilter(){ activePlaceId=null; activePlaceName=''; clearCache(); Object.keys(phenologyCache).forEach(k=>delete phenologyCache[k]); activePlaceEl.classList.remove('visible'); repaint(); }
 
 // iNAT SYNC
@@ -1013,8 +1071,16 @@ async function spRenderAll(){
   const wrap=document.createElement('div'); wrap.className='species-dense-wrap sp-overlay-grid';
   renderDenseWrap(spState.loaded,wrap);
   spOverlayBody.innerHTML=''; spOverlayBody.appendChild(wrap);
-  if(!spState.done){ const d=document.createElement('div'); d.className='sp-load-more-wrap'; d.innerHTML='<button class="sp-load-more-btn" id="spLoadMoreBtn">Cargar más</button>'; spOverlayBody.appendChild(d); document.getElementById('spLoadMoreBtn').addEventListener('click',()=>{ document.getElementById('spLoadMoreBtn').disabled=true; spLoadNextPage(); }); }
-  else { const d=document.createElement('div'); d.className='sp-load-done'; d.textContent='✓ '+totalLoaded.toLocaleString()+' especies'; spOverlayBody.appendChild(d); }
+  if(!spState.done){
+    const prog=document.createElement('div'); prog.className='sp-load-more-wrap'; prog.id='spLoadProg';
+    prog.innerHTML='<div class="sp-overlay-loading" style="padding:12px"><div class="spinner"></div></div>';
+    spOverlayBody.appendChild(prog);
+    setTimeout(()=>spLoadNextPage(),30);
+  } else {
+    const d=document.createElement('div'); d.className='sp-load-done';
+    d.textContent='✓ '+totalLoaded.toLocaleString()+' especies';
+    spOverlayBody.appendChild(d);
+  }
 }
 
 // PDF
@@ -1048,6 +1114,200 @@ async function openPrintPage(species,taxonName,regionName){
   const win=window.open('','_blank');
   if(!win){ alert('Permite las ventanas emergentes para generar el PDF.'); return; }
   win.document.write(html); win.document.close();
+}
+
+// lat/lng → tile x,y at given zoom
+function lngLatToTile(lng, lat, zoom) {
+  const n = Math.pow(2, zoom);
+  const x = Math.floor((lng + 180) / 360 * n);
+  const latRad = lat * Math.PI / 180;
+  const y = Math.floor((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n);
+  return {x, y};
+}
+
+// Pick best zoom+tile to show a set of latlngs
+function bestTileForPoints(latlngs) {
+  if (!latlngs.length) return {zoom:1, x:0, y:0};
+  let minLat=90, maxLat=-90, minLng=180, maxLng=-180;
+  latlngs.forEach(([lat,lng]) => {
+    if(lat<minLat) minLat=lat; if(lat>maxLat) maxLat=lat;
+    if(lng<minLng) minLng=lng; if(lng>maxLng) maxLng=lng;
+  });
+  const cLat=(minLat+maxLat)/2, cLng=(minLng+maxLng)/2;
+  const spanLat=maxLat-minLat, spanLng=maxLng-minLng;
+  let zoom=1;
+  for(let z=8;z>=1;z--){
+    if(spanLat<(180/Math.pow(2,z))*2 && spanLng<(360/Math.pow(2,z))*2){ zoom=z; break; }
+  }
+  const {x,y}=lngLatToTile(cLng,cLat,zoom);
+  return {zoom, x, y, cLat, cLng};
+}
+
+// Compute a fixed tile from all observed points across all species.
+// Uses percentile clipping to ignore outliers (e.g. Canary Islands when filtering Spain).
+function getPlaceTileFromObs(obsCache) {
+  if(!activePlaceId) return null;
+  const all = [];
+  Object.values(obsCache).forEach(pts => pts.forEach(p => all.push(p)));
+  if(all.length < 2) return null;
+  const lats = all.map(p=>p[0]).sort((a,b)=>a-b);
+  const lngs = all.map(p=>p[1]).sort((a,b)=>a-b);
+  // clip to 5th-95th percentile to remove outliers
+  const clip = (arr) => {
+    const lo = Math.floor(arr.length * 0.05);
+    const hi = Math.ceil(arr.length * 0.95) - 1;
+    return [arr[lo], arr[Math.min(hi, arr.length-1)]];
+  };
+  const [minLat, maxLat] = clip(lats);
+  const [minLng, maxLng] = clip(lngs);
+  // add 10% padding
+  const padLat = (maxLat-minLat)*0.1||0.5;
+  const padLng = (maxLng-minLng)*0.1||0.5;
+  return bestTileForPoints([
+    [minLat-padLat, minLng-padLng],
+    [maxLat+padLat, maxLng+padLng],
+    [minLat-padLat, maxLng+padLng],
+    [maxLat+padLat, minLng-padLng]
+  ]);
+}
+
+document.getElementById('spListBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('spListBtn');
+  if(btn.disabled) return;
+  btn.disabled = true; btn.textContent = '\u23f3';
+  try {
+    const allSpecies = spState.loaded || [];
+    if(!allSpecies.length) { alert('No hay especies cargadas.'); return; }
+    await openListPage(allSpecies, spState.taxonName || 'Taxón', activePlaceName || '');
+  } catch(e) { alert('Error: ' + e.message); }
+  finally { btn.disabled = false; btn.innerHTML = '&#128205; <span>Listado</span>'; }
+});
+
+async function openListPage(species,taxonName,regionName){
+  const win=window.open('','_blank');
+  if(!win){alert('Permite las ventanas emergentes.');return;}
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#0d1117;color:#e6edf3;font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;gap:16px}.sp{width:40px;height:40px;border:3px solid #30363d;border-top-color:#2d9e45;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}p{font-size:.85rem;color:#8b949e;font-family:monospace}</style></head><body><div class="sp"></div><p>Cargando\u2026</p></body></html>');
+  win.document.close();
+  await enrichFamilies(species);
+  const {byFamily,families}=groupByFamily(species);
+  const fmtObs=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1000?Math.round(n/1000)+'k':String(n||0);
+  const obsCache={};
+  const placeParam=activePlaceId?'&place_id='+activePlaceId:'';
+  for(let i=0;i<species.length;i+=8){
+    const batch=species.slice(i,i+8);
+    await Promise.all(batch.map(async sp=>{
+      try{
+        const r=await fetch(API+'/observations?taxon_id='+sp.id+'&quality_grade=research&captive=false&per_page=30&order_by=votes'+placeParam);
+        const d=await r.json();
+        obsCache[sp.id]=(d.results||[]).filter(o=>o.location).map(o=>{
+          const p=o.location.split(',');return[parseFloat(p[0]),parseFloat(p[1])];
+        }).filter(p=>!isNaN(p[0])&&!isNaN(p[1]));
+      }catch(e){obsCache[sp.id]=[];}
+    }));
+  }
+  const sharedBounds=(()=>{
+    if(!activePlaceId) return null;
+    const all=[];
+    Object.values(obsCache).forEach(pts=>pts.forEach(p=>all.push(p)));
+    if(all.length<4) return null;
+    const lats=all.map(p=>p[0]).sort((a,b)=>a-b);
+    const lngs=all.map(p=>p[1]).sort((a,b)=>a-b);
+    const lo=Math.floor(all.length*0.05),hi=Math.ceil(all.length*0.95)-1;
+    const pad=0.8;
+    return[[lats[lo]-pad,lngs[lo]-pad],[lats[Math.min(hi,lats.length-1)]+pad,lngs[Math.min(hi,lngs.length-1)]+pad]];
+  })();
+  const inatTileBase='https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?taxon_id=ID&color=%232d9e45&quality_grade=research&captive=false'+(activePlaceId?'&place_id='+activePlaceId:'');
+  // Build family/genus sections — same structure as PDF but each cell has photo+map stacked
+  const familySections=families.map(fam=>{
+    const genera=Object.keys(byFamily[fam]).sort();
+    const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
+    const genusBlocks=genera.map(gen=>{
+      const spp=byFamily[fam][gen];
+      const cols=Math.min(spp.length,4);
+      const cells=spp.map(sp=>{
+        const photo=sp.photo?sp.photo.replace('/square.','/small.').replace('/medium.','/small.'):null;
+        const imgHtml=photo?'<img src="'+photo+'" loading="eager">':'<div class="no-img">\uD83D\uDCF7</div>';
+        return '<div class="sp-cell">'
+          +'<div class="sp-img-wrap">'+imgHtml+'</div>'
+          +'<div class="sp-map-wrap"><div class="spmap" id="lmap-'+sp.id+'"></div></div>'
+          +'<div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'
+          +(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')
+          +'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div>'
+          +'</div>';
+      }).join('');
+      return '<div class="genus-block"><div class="genus-banner"><span class="genus-name">'+gen+'</span><span class="genus-count">'+spp.length+' sp.</span></div>'
+        +'<div class="sp-grid" style="grid-template-columns:repeat('+cols+',32mm)">'+cells+'</div></div>';
+    }).join('');
+    return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
+  }).join('');
+  const css='*{box-sizing:border-box;margin:0;padding:0}'
+    +'body{background:#0d1117;font-family:Arial,sans-serif;color:#e6edf3;padding:5mm;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'#topbar{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.95);padding:5px 0 6px;border-bottom:1px solid #30363d;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;backdrop-filter:blur(8px)}'
+    +'#printBtn{padding:5px 14px;background:transparent;color:#8b949e;border:1px solid #30363d;border-radius:5px;font-family:monospace;font-size:.72rem;cursor:pointer;transition:all .2s}'
+    +'#printBtn:hover{border-color:#2d9e45;color:#2d9e45}'
+    +'#printHint{font-size:.6rem;color:#484f58;font-family:monospace}'
+    +'.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:8px;border-bottom:1px solid #30363d}'
+    +'.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#e6edf3}'
+    +'.page-header .meta{font-family:monospace;font-size:6.5pt;color:#484f58}'
+    +'.family-section{width:100%;margin-bottom:8px}'
+    +'.family-banner{display:flex;align-items:baseline;gap:8px;background:#161b22;border-left:4px solid #58a6ff;padding:4px 8px;margin-bottom:4px}'
+    +'.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#58a6ff;font-weight:bold}'
+    +'.family-count{font-family:monospace;font-size:6pt;color:#484f58}'
+    +'.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}'
+    +'.genus-block{display:inline-flex;flex-direction:column;break-inside:avoid}'
+    +'.genus-banner{display:flex;align-items:center;gap:5px;background:#161b22;border-top:2px solid #7ee787;padding:3px 5px 3px 6px;width:100%}'
+    +'.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#7ee787;font-weight:bold;white-space:nowrap}'
+    +'.genus-count{font-family:monospace;font-size:5.5pt;color:#484f58}'
+    +'.sp-grid{display:grid;gap:1px;background:#0d1117}'
+    +'.sp-cell{background:#0d1117;overflow:hidden;width:32mm}'
+    +'.sp-img-wrap{width:32mm;height:20mm;overflow:hidden;background:#161b22}'
+    +'.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}'
+    +'.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#30363d;font-size:14pt}'
+    +'.sp-map-wrap{width:32mm;height:20mm;overflow:hidden;background:#c8d5c5}'
+    +'.spmap{width:100%;height:100%}'
+    +'.leaflet-container{background:#e8e4da!important;margin:0!important}'
+    +'.sp-txt{padding:2px 3px 3px}'
+    +'.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#7ee787;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-com{font-size:4.8pt;color:#8b949e;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-obs{font-family:monospace;font-size:4.2pt;color:#30363d;margin-top:1px}'
+    +'@media screen and (max-width:600px){.sp-cell{width:44vw}.sp-img-wrap{height:44vw}.sp-map-wrap{height:44vw}#printBtn{font-size:.82rem;padding:7px 16px}}'
+    +'@media print{@page{margin:5mm;size:A4 portrait}#topbar{display:none}body{background:#0d1117!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
+  const idsJ=JSON.stringify(species.map(s=>s.id));
+  const obsJ=JSON.stringify(obsCache);
+  const bndsJ=JSON.stringify(sharedBounds);
+  const tileJ=JSON.stringify(inatTileBase);
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+taxonName+'</title>'
+    +'<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">'
+    +'<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"><\/scr'+'ipt>'
+    +'<style>'+css+'<\/style><\/head><body>'
+    +'<div id="topbar"><button id="printBtn">\uD83D\uDDB6 Imprimir \/ PDF<\/button><span id="printHint">Espera a que carguen los mapas<\/span><\/div>'
+    +'<div class="page-header"><span class="title">'+taxonName+(regionName?' \u00b7 '+regionName:'')+'<\/span><span class="meta">'+species.length+' especies \u00b7 BioExplorer<\/span><\/div>'
+    +familySections
+    +'<scr'+'ipt>'
+    +'const ids='+idsJ+';const obs='+obsJ+';const shared='+bndsJ+';const TILE='+tileJ+';'
+    +'const BASE="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png";'
+    +'const LBLS="https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png";'
+    +'const OPT={subdomains:"abcd",maxZoom:19};const maps={};'
+    +'ids.forEach(id=>{'
+    +'const el=document.getElementById("lmap-"+id);if(!el)return;'
+    +'const map=L.map(el,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,touchZoom:false,keyboard:false});'
+    +'L.tileLayer(BASE,OPT).addTo(map);'
+    +'L.tileLayer(TILE.replace("ID",id),{maxZoom:19,opacity:0.9}).addTo(map);'
+    +'L.tileLayer(LBLS,{...OPT,opacity:0.65}).addTo(map);'
+    +'maps[id]=map;});'
+    +'function fitAll(){'
+    +'ids.forEach(id=>{'
+    +'const map=maps[id];if(!map)return;map.invalidateSize();'
+    +'const pts=obs[id]||[];'
+    +'if(shared){try{map.fitBounds(shared,{animate:false});}catch(e){}}'
+    +'else if(pts.length>=2){try{map.fitBounds(L.latLngBounds(pts).pad(0.5),{maxZoom:6,animate:false});}catch(e){map.setView([20,0],2);}}'
+    +'else{map.setView([20,0],2);}});}'
+    +'setTimeout(fitAll,300);setTimeout(fitAll,900);'
+    +'document.getElementById("printBtn").addEventListener("click",()=>{fitAll();setTimeout(()=>{window.focus();window.print();},500);});'
+    +'<\/scr'+'ipt><\/body><\/html>';
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  win.location.replace(url);
 }
 
 // INIT
