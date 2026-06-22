@@ -1109,8 +1109,8 @@ async function openPrintPage(species,taxonName,regionName){
     }).join('');
     return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. · '+genera.length+' gén.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
   }).join('');
-  const pdfStyles='*{box-sizing:border-box;margin:0;padding:0}body{background:#0d1117;font-family:Arial,sans-serif;color:#e6edf3;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #30363d}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#e6edf3}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#484f58}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#161b22;border-left:4px solid #58a6ff;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#58a6ff;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#484f58}.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}.genus-block{display:inline-flex;flex-direction:column;break-inside:avoid}.genus-banner{display:flex;align-items:center;gap:5px;background:#161b22;border-top:2px solid #7ee787;padding:3px 5px 3px 6px;width:100%}.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#7ee787;font-weight:bold;white-space:nowrap}.genus-count{font-family:monospace;font-size:5.5pt;color:#484f58}.sp-grid{display:grid;gap:1px;background:#0d1117}.sp-cell{background:#0d1117;overflow:hidden;width:32mm}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#161b22}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#30363d;font-size:16pt}.sp-txt{background:#0d1117;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#7ee787;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#8b949e;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-obs{font-family:monospace;font-size:4.2pt;color:#30363d;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#0d1117!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
-  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+taxonName+'</title><style>'+pdfStyles+'</style></head><body><div style="position:fixed;inset:0;background:#0d1117;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div class="page-header"><span class="title">'+taxonName+(regionName?' · '+regionName:'')+'</span><span class="meta">'+sorted.length+' especies · BioExplorer</span></div>'+familySections+'<'+'script>const imgs=Array.from(document.querySelectorAll("img"));let pending=imgs.filter(i=>!i.complete||!i.naturalWidth).length;const tryPrint=()=>{pending--;if(pending<=0)doPrint();};const doPrint=()=>{window.focus();window.print();};if(pending===0){setTimeout(doPrint,300);}else{imgs.forEach(img=>{if(!img.complete||!img.naturalWidth){img.onload=tryPrint;img.onerror=tryPrint;}});setTimeout(doPrint,8000);}<'+'/script></body></html>';
+  const pdfStyles='*{box-sizing:border-box;margin:0;padding:0}body{background:#ffffff;font-family:Arial,sans-serif;color:#1a1a1a;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #dddddd}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#1a1a1a}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#666666}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#f5f5f5;border-left:4px solid #1a56a0;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#1a56a0;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#666666}.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}.genus-block{display:inline-flex;flex-direction:column;break-inside:avoid}.genus-banner{display:flex;align-items:center;gap:5px;background:#f5f5f5;border-top:2px solid #1a7a2e;padding:3px 5px 3px 6px;width:100%}.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#1a7a2e;font-weight:bold;white-space:nowrap}.genus-count{font-family:monospace;font-size:5.5pt;color:#666666}.sp-grid{display:grid;gap:1px;background:#ffffff}.sp-cell{background:#ffffff;overflow:hidden;width:32mm}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#f5f5f5}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999999;font-size:16pt}.sp-txt{background:#ffffff;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#1a7a2e;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#555555;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-obs{font-family:monospace;font-size:4.2pt;color:#999999;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#ffffff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
+  const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+taxonName+'</title><style>'+pdfStyles+'</style></head><body><div style="position:fixed;inset:0;background:#ffffff;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div class="page-header"><span class="title">'+taxonName+(regionName?' · '+regionName:'')+'</span><span class="meta">'+sorted.length+' especies · BioExplorer</span></div>'+familySections+'<'+'script>const imgs=Array.from(document.querySelectorAll("img"));let pending=imgs.filter(i=>!i.complete||!i.naturalWidth).length;const tryPrint=()=>{pending--;if(pending<=0)doPrint();};const doPrint=()=>{window.focus();window.print();};if(pending===0){setTimeout(doPrint,300);}else{imgs.forEach(img=>{if(!img.complete||!img.naturalWidth){img.onload=tryPrint;img.onerror=tryPrint;}});setTimeout(doPrint,8000);}<'+'/script></body></html>';
   const win=window.open('','_blank');
   if(!win){ alert('Permite las ventanas emergentes para generar el PDF.'); return; }
   win.document.write(html); win.document.close();
@@ -1186,7 +1186,7 @@ document.getElementById('spListBtn').addEventListener('click', async () => {
 async function openListPage(species,taxonName,regionName){
   const win=window.open('','_blank');
   if(!win){alert('Permite las ventanas emergentes.');return;}
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#0d1117;color:#e6edf3;font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;gap:16px}.sp{width:40px;height:40px;border:3px solid #30363d;border-top-color:#2d9e45;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}p{font-size:.85rem;color:#8b949e;font-family:monospace}</style></head><body><div class="sp"></div><p>Cargando\u2026</p></body></html>');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{background:#ffffff;color:#1a1a1a;font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0;gap:16px}.sp{width:40px;height:40px;border:3px solid #30363d;border-top-color:#2d9e45;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}p{font-size:.85rem;color:#555555;font-family:monospace}</style></head><body><div class="sp"></div><p>Cargando\u2026</p></body></html>');
   win.document.close();
   await enrichFamilies(species);
   const {byFamily,families}=groupByFamily(species);
@@ -1241,37 +1241,37 @@ async function openListPage(species,taxonName,regionName){
     return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
   }).join('');
   const css='*{box-sizing:border-box;margin:0;padding:0}'
-    +'body{background:#0d1117;font-family:Arial,sans-serif;color:#e6edf3;padding:5mm;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
-    +'#topbar{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.95);padding:5px 0 6px;border-bottom:1px solid #30363d;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;backdrop-filter:blur(8px)}'
-    +'#printBtn{padding:5px 14px;background:transparent;color:#8b949e;border:1px solid #30363d;border-radius:5px;font-family:monospace;font-size:.72rem;cursor:pointer;transition:all .2s}'
+    +'body{background:#ffffff;font-family:Arial,sans-serif;color:#1a1a1a;padding:5mm;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
+    +'#topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);padding:5px 0 6px;border-bottom:1px solid #dddddd;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;backdrop-filter:blur(8px)}'
+    +'#printBtn{padding:5px 14px;background:transparent;color:#555555;border:1px solid #30363d;border-radius:5px;font-family:monospace;font-size:.72rem;cursor:pointer;transition:all .2s}'
     +'#printBtn:hover{border-color:#2d9e45;color:#2d9e45}'
-    +'#printHint{font-size:.6rem;color:#484f58;font-family:monospace}'
-    +'.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:8px;border-bottom:1px solid #30363d}'
-    +'.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#e6edf3}'
-    +'.page-header .meta{font-family:monospace;font-size:6.5pt;color:#484f58}'
+    +'#printHint{font-size:.6rem;color:#666666;font-family:monospace}'
+    +'.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:8px;border-bottom:1px solid #dddddd}'
+    +'.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#1a1a1a}'
+    +'.page-header .meta{font-family:monospace;font-size:6.5pt;color:#666666}'
     +'.family-section{width:100%;margin-bottom:8px}'
-    +'.family-banner{display:flex;align-items:baseline;gap:8px;background:#161b22;border-left:4px solid #58a6ff;padding:4px 8px;margin-bottom:4px}'
-    +'.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#58a6ff;font-weight:bold}'
-    +'.family-count{font-family:monospace;font-size:6pt;color:#484f58}'
+    +'.family-banner{display:flex;align-items:baseline;gap:8px;background:#f5f5f5;border-left:4px solid #1a56a0;padding:4px 8px;margin-bottom:4px}'
+    +'.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#1a56a0;font-weight:bold}'
+    +'.family-count{font-family:monospace;font-size:6pt;color:#666666}'
     +'.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}'
     +'.genus-block{display:inline-flex;flex-direction:column;break-inside:avoid}'
-    +'.genus-banner{display:flex;align-items:center;gap:5px;background:#161b22;border-top:2px solid #7ee787;padding:3px 5px 3px 6px;width:100%}'
-    +'.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#7ee787;font-weight:bold;white-space:nowrap}'
-    +'.genus-count{font-family:monospace;font-size:5.5pt;color:#484f58}'
-    +'.sp-grid{display:grid;gap:1px;background:#0d1117}'
-    +'.sp-cell{background:#0d1117;overflow:hidden;width:32mm}'
-    +'.sp-img-wrap{width:32mm;height:20mm;overflow:hidden;background:#161b22}'
+    +'.genus-banner{display:flex;align-items:center;gap:5px;background:#f5f5f5;border-top:2px solid #1a7a2e;padding:3px 5px 3px 6px;width:100%}'
+    +'.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#1a7a2e;font-weight:bold;white-space:nowrap}'
+    +'.genus-count{font-family:monospace;font-size:5.5pt;color:#666666}'
+    +'.sp-grid{display:grid;gap:1px;background:#ffffff}'
+    +'.sp-cell{background:#ffffff;overflow:hidden;width:32mm}'
+    +'.sp-img-wrap{width:32mm;height:20mm;overflow:hidden;background:#f5f5f5}'
     +'.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}'
-    +'.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#30363d;font-size:14pt}'
-    +'.sp-map-wrap{width:32mm;height:20mm;overflow:hidden;background:#c8d5c5}'
+    +'.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999999;font-size:14pt}'
+    +'.sp-map-wrap{width:32mm;height:20mm;overflow:hidden;background:#dde8dd}'
     +'.spmap{width:100%;height:100%}'
     +'.leaflet-container{background:#e8e4da!important;margin:0!important}'
     +'.sp-txt{padding:2px 3px 3px}'
-    +'.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#7ee787;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
-    +'.sp-com{font-size:4.8pt;color:#8b949e;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
-    +'.sp-obs{font-family:monospace;font-size:4.2pt;color:#30363d;margin-top:1px}'
+    +'.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#1a7a2e;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-com{font-size:4.8pt;color:#555555;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-obs{font-family:monospace;font-size:4.2pt;color:#999999;margin-top:1px}'
     +'@media screen and (max-width:600px){.sp-cell{width:44vw}.sp-img-wrap{height:44vw}.sp-map-wrap{height:44vw}#printBtn{font-size:.82rem;padding:7px 16px}}'
-    +'@media print{@page{margin:5mm;size:A4 portrait}#topbar{display:none}body{background:#0d1117!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
+    +'@media print{@page{margin:5mm;size:A4 portrait}#topbar{display:none}body{background:#ffffff!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
   const idsJ=JSON.stringify(species.map(s=>s.id));
   const obsJ=JSON.stringify(obsCache);
   const bndsJ=JSON.stringify(sharedBounds);
