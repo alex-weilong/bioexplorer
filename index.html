@@ -29,6 +29,8 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .level-sub{color:var(--muted);font-size:.83rem;margin-left:auto;font-family:'DM Mono',monospace;white-space:nowrap}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;animation:fadeUp .3s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.taxon-seen{border-color:rgba(45,158,69,.5)!important}
+.tc-seen-badge{display:inline-block;margin-top:6px;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--accent);background:rgba(45,158,69,.12);border:1px solid rgba(45,158,69,.3);padding:2px 7px;border-radius:99px}
 .taxon-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;display:flex;flex-direction:column}
 .taxon-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
 .tc-img-wrap{width:100%;aspect-ratio:3/2;overflow:hidden;background:var(--surface2);flex-shrink:0;position:relative}
@@ -97,6 +99,9 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
 .place-preview.visible{display:block}
 .place-preview-label{position:absolute;bottom:8px;left:8px;z-index:10;font-family:'DM Mono',monospace;font-size:.62rem;color:white;background:rgba(0,0,0,.55);padding:3px 8px;border-radius:4px;backdrop-filter:blur(4px);max-width:80%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 #placePreviewMap{width:100%;height:100%}
+.quick-place{flex-shrink:0;padding:6px 12px;border:1px solid var(--border);border-radius:99px;background:var(--surface);color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;font-size:.68rem;transition:all .18s;white-space:nowrap}
+.quick-place:hover{border-color:var(--accent);color:var(--accent)}
+.quick-place:disabled{opacity:.5;cursor:default}
 .active-place{display:none;align-items:center;gap:8px;padding:4px 10px;border-radius:99px;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.35);font-size:.75rem;font-family:'DM Mono',monospace;color:var(--accent2)}
 .active-place.visible{display:flex}
 .active-place button{background:none;border:none;color:var(--accent2);cursor:pointer;font-size:.85rem;padding:0;line-height:1;opacity:.7;transition:opacity .15s}
@@ -261,6 +266,7 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
       <button class="place-clear" id="placeClear">&#10005;</button>
       <div class="place-dropdown" id="placeDropdown"></div>
     </div>
+    <button class="quick-place" id="iberiaBtn" title="Filtrar por Pen&iacute;nsula Ib&eacute;rica">Ib&eacute;rica</button>
     <div class="active-place" id="activePlace">
       <span id="activePlaceName"></span>
       <button id="activePlaceClear">&#10005;</button>
@@ -302,6 +308,7 @@ main{max-width:1400px;margin:0 auto;padding:40px 40px 80px;position:relative;z-i
     <div style="font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);flex-shrink:0" id="spOverlayMeta"></div>
     <button class="pdf-export-btn" id="spPdfBtn">&#128196; <span class="pdf-label">PDF</span></button>
     <button class="pdf-export-btn" id="spListBtn" style="border-color:var(--accent);color:var(--accent)">&#128200; <span>Distribución</span></button>
+    <button class="pdf-export-btn" id="spXlsBtn" style="border-color:#1d6f42;color:#3fb950">&#128202; <span>Excel</span></button>
     <button id="spOverlayClose" style="width:32px;height:32px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
   </div>
   <div id="spOverlayBody" style="flex:1;overflow-y:auto;padding:28px 40px 60px"></div>
@@ -489,7 +496,10 @@ async function renderCardGrid(items,rankLabel,clickFn){
     const pillText=activePlaceId?'\u2026':(globalCount?globalCount.toLocaleString()+' spp.':'\u2014');
     const photo=item.default_photo?.medium_url||item.default_photo?.url||null;
     const displayName=(emoji?'<span style="font-style:normal;font-family:sans-serif">'+emoji+'</span> ':'')+item.name;
-    const card=makeCard(rankLabel,displayName,item.preferred_common_name||'',[pillText],photo);
+    const taxonSeen=isSeenTaxon(item.id);
+    const seenBadge=taxonSeen?'✓':'';
+    const card=makeCard(rankLabel,displayName,item.preferred_common_name||'',[pillText],photo,seenBadge);
+    card.dataset.taxonId=item.id;
     card.addEventListener('click',()=>clickFn(item));
     grid.appendChild(card);
   });
@@ -500,8 +510,55 @@ async function renderCardGrid(items,rankLabel,clickFn){
       const pill=cards[i]?.querySelector('.tc-pill');
       if(pill){ pill.textContent=count.toLocaleString()+' spp.'; pill.style.color='var(--accent2)'; }
     }));
+    // Update seen counters after place counts (so we know total children)
+    updateChildSeenCounters(items,cards,childRank);
   }
 }
+// Count how many direct children taxa have been seen
+function updateChildSeenCounters(items,cards,childRank){
+  if(!currentUser||!Object.keys(seenCache).length) return;
+  // Build set of seen taxon IDs filtered to active place
+  // seenCache keys are species the user has seen; ancestor_ids links them to higher taxa
+  // For each card taxon, count seen species that are descendants
+  var seenSpeciesInPlace=null;
+  if(activePlaceId){
+    // Filter seenCache to only species present in this place
+    // We know which species exist in place from the species_counts already fetched
+    // Use the place count promises already in cache to get totals,
+    // and cross-reference seen species ancestor_ids
+    items.forEach(function(item,i){
+      var card=cards[i]; if(!card) return;
+      var badge=card.querySelector('.tc-seen-badge'); if(!badge) return;
+      // Count seen species under this taxon that also exist in the place
+      var seenCount=0;
+      Object.values(seenCache).forEach(function(sp){
+        if((sp.ancestor_ids||[]).indexOf(item.id)>=0||sp.id===item.id) seenCount++;
+      });
+      if(seenCount===0){ badge.textContent=''; badge.style.display='none'; return; }
+      badge.style.display='';
+      // Get total for this zone from cache (already fetched by renderCardGrid)
+      var k='pc_'+item.id+'_'+activePlaceId;
+      var totalPromise=cache[k]||fetchPlaceCount(item.id);
+      totalPromise.then(function(total){
+        badge.textContent=total?'✓ '+seenCount+'/'+total:('✓ '+seenCount);
+      });
+    });
+  } else {
+    items.forEach(function(item,i){
+      var card=cards[i]; if(!card) return;
+      var badge=card.querySelector('.tc-seen-badge'); if(!badge) return;
+      var seenCount=0;
+      Object.values(seenCache).forEach(function(sp){
+        if((sp.ancestor_ids||[]).indexOf(item.id)>=0||sp.id===item.id) seenCount++;
+      });
+      if(seenCount===0){ badge.textContent=''; badge.style.display='none'; return; }
+      badge.style.display='';
+      var total=item.complete_species_count||null;
+      badge.textContent=total?'✓ '+seenCount+'/'+total:('✓ '+seenCount);
+    });
+  }
+}
+
 function showChildrenLevel(parent,children,childRank){
   const parentRankEs=RANK_ES[parent.rank]||parent.rank;
   const childRankEs=RANK_ES[childRank]||childRank;
@@ -509,7 +566,10 @@ function showChildrenLevel(parent,children,childRank){
   const m=document.getElementById('main');
   m.innerHTML='<div class="level-header"><div><div class="level-rank">'+parentRankEs+'</div><div class="level-title">'+parent.name+'</div></div><button class="all-species-btn" id="allSpeciesBtn"><span>🌿</span><span>Ver todas las especies</span></button><div class="level-sub">'+sorted.length+' '+childRankEs+'s</div></div><div class="card-grid" id="grid"></div>';
   document.getElementById('allSpeciesBtn').addEventListener('click',()=>openAllSpeciesOverlay(parent.id,parent.name,parent.rank));
-  renderCardGrid(sorted,childRankEs,child=>enterTaxon(child.id,child.name,childRank));
+  renderCardGrid(sorted,childRankEs,child=>enterTaxon(child.id,child.name,childRank)).then(function(){
+    const cards=[...document.getElementById('grid').querySelectorAll('.taxon-card')];
+    updateChildSeenCounters(sorted,cards,childRank);
+  });
 }
 
 // FAMILIES
@@ -768,14 +828,15 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeMapPopover(); closePhenologyPopover(); } });
 
 // HELPERS
-function makeCard(rank,name,common,pills,photo){
-  const card=document.createElement('div'); card.className='taxon-card';
+function makeCard(rank,name,common,pills,photo,seenBadge){
+  const card=document.createElement('div'); card.className='taxon-card'+(seenBadge?' taxon-seen':'');
   const wrap=document.createElement('div'); wrap.className='tc-img-wrap';
   if(photo){ const img=document.createElement('img'); img.className='tc-img'; img.src=photo; img.alt=name; img.loading='lazy'; wrap.appendChild(img); }
   else { const ph=document.createElement('div'); ph.className='tc-no-img'; ph.textContent='🔬'; wrap.appendChild(ph); }
   const arrow=document.createElement('span'); arrow.className='tc-arrow'; arrow.textContent='→';
   const body=document.createElement('div'); body.className='tc-body';
-  body.innerHTML='<div class="tc-rank">'+rank+'</div><div class="tc-name">'+name+'</div>'+(common?'<div class="tc-common">'+common+'</div>':'')+'<div class="tc-meta">'+pills.map(p=>'<span class="tc-pill">'+p+'</span>').join('')+'</div>';
+  const seenHtml=seenBadge?'<div class="tc-seen-badge">'+seenBadge+'</div>':'';
+  body.innerHTML='<div class="tc-rank">'+rank+'</div><div class="tc-name">'+name+'</div>'+(common?'<div class="tc-common">'+common+'</div>':'')+'<div class="tc-meta">'+pills.map(p=>'<span class="tc-pill">'+p+'</span>').join('')+'</div>'+seenHtml;
   card.appendChild(wrap); card.appendChild(arrow); card.appendChild(body);
   return card;
 }
@@ -907,6 +968,28 @@ placeInput.addEventListener('keydown',e=>{ const items=placeDropdown.querySelect
 placeClear.addEventListener('click',()=>{ placeInput.value=''; placeClear.classList.remove('visible'); closePlaceDropdown(); placeInput.focus(); });
 document.addEventListener('click',e=>{ if(!document.getElementById('placeWrap').contains(e.target)) closePlaceDropdown(); });
 document.getElementById('activePlaceClear').addEventListener('click',clearPlaceFilter);
+document.getElementById('iberiaBtn').addEventListener('click',async()=>{
+  const btn=document.getElementById('iberiaBtn');
+  const original=btn.innerHTML;
+  btn.disabled=true; btn.textContent='\u2026';
+  try{
+    let found=null;
+    const queries=['Iberian Peninsula','Peninsula Iberica'];
+    for(let i=0;i<queries.length && !found;i++){
+      const res=await fetch(API+'/places/autocomplete?q='+encodeURIComponent(queries[i])+'&per_page=10');
+      if(!res.ok) continue;
+      const data=await res.json();
+      found=(data.results||[]).find(p=>/iberian|ib[eé]rica/i.test(p.name||''));
+    }
+    if(!found){
+      const res=await fetch(API+'/places/autocomplete?q=Spain&per_page=10');
+      const data=await res.json();
+      found=(data.results||[]).find(p=>/^spain$|^espa/i.test(p.name||''))||(data.results||[])[0];
+    }
+    if(found) selectPlace(found);
+  }catch(e){}
+  btn.disabled=false; btn.innerHTML=original;
+});
 function closePlaceDropdown(){ placeDropdown.classList.remove('open'); placeDropdown.innerHTML=''; placeFocusIndex=-1; placeResults=[]; if(previewMap){ previewMap.remove(); previewMap=null; } }
 async function searchPlaces(q){
   try{
@@ -970,8 +1053,19 @@ function clearPlaceFilter(){ activePlaceId=null; activePlaceName=''; clearCache(
 // iNAT SYNC
 let currentUser=null,seenCache={};
 function saveLocal(){ try{ localStorage.setItem('bioexp_user',JSON.stringify(currentUser)); localStorage.setItem('bioexp_seen',JSON.stringify(seenCache)); }catch(e){} }
-function loadLocal(){ try{ const u=localStorage.getItem('bioexp_user'),s=localStorage.getItem('bioexp_seen'); if(u) currentUser=JSON.parse(u); if(s) seenCache=JSON.parse(s); }catch(e){} }
+function loadLocal(){ try{ const u=localStorage.getItem('bioexp_user'),s=localStorage.getItem('bioexp_seen'); if(u) currentUser=JSON.parse(u); if(s) seenCache=JSON.parse(s); }catch(e){}   rebuildSeenAncestors();
+}
+// Index of all ancestor taxon IDs of seen species
+var seenAncestors=new Set();
+function rebuildSeenAncestors(){
+  seenAncestors=new Set();
+  Object.values(seenCache).forEach(function(sp){
+    (sp.ancestor_ids||[]).forEach(function(id){ seenAncestors.add(id); });
+    seenAncestors.add(sp.id||sp);
+  });
+}
 function isSeen(id){ return !!seenCache[id]; }
+function isSeenTaxon(id){ return seenAncestors.has(id)||!!seenCache[id]; }
 function updateSeenCounter(){ const el=document.getElementById('mySpeciesCount'); if(el) el.textContent=Object.keys(seenCache).length; }
 function updateAuthUI(){ const btn=document.getElementById('authBtn'),avatar=document.getElementById('authAvatar'); if(!btn) return; if(currentUser){ if(avatar&&currentUser.icon){ avatar.style.backgroundImage='url('+currentUser.icon+')'; avatar.style.display='block'; } document.getElementById('authLabel').textContent='@'+currentUser.login; }else{ if(avatar) avatar.style.display='none'; document.getElementById('authLabel').textContent='Conectar iNat'; } }
 async function handleAuth(){ if(currentUser){ const action=confirm('@'+currentUser.login+'\n\nPulsa OK para resincronizar.'); if(action){ const toast=showToast('Sincronizando\u2026','muted'); try{ await syncInatUser(currentUser.login,null); saveLocal(); updateSeenCounter(); toast.update('✓ '+Object.keys(seenCache).length+' especies','accent'); }catch(e){ toast.update('✗ '+e.message,'accent3'); } setTimeout(()=>toast.remove(),3000); } }else showInatLoginPrompt(); }
@@ -1005,7 +1099,7 @@ async function syncInatUser(login,statusEl){
     if(results.length<PER_PAGE) break;
     page++; await new Promise(r=>setTimeout(r,100));
   }
-  seenCache=newSeen; if(statusEl) statusEl.textContent='✓ '+Object.keys(seenCache).length+' especies sincronizadas';
+  seenCache=newSeen; rebuildSeenAncestors(); if(statusEl) statusEl.textContent='✓ '+Object.keys(seenCache).length+' especies sincronizadas';
 }
 
 // MY SPECIES
@@ -1096,20 +1190,24 @@ async function openPrintPage(species,taxonName,regionName){
   const {byFamily,families}=groupByFamily(species);
   const fmtObs=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1000?Math.round(n/1000)+'k':String(n||0);
   const sorted=[...species].sort((a,b)=>a.name.localeCompare(b.name));
-  const familySections=families.map(fam=>{
+  let allItems='';
+  families.forEach(fam=>{
     const genera=Object.keys(byFamily[fam]).sort();
     const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
-    const genusBlocks=genera.map(genus=>{
-      const spp=byFamily[fam][genus],cols=Math.min(spp.length,4);
-      const cells=spp.map(sp=>{
+    genera.forEach((genus,gi)=>{
+      byFamily[fam][genus].forEach((sp,si)=>{
         const img=sp.photo?'<img src="'+sp.photo.replace('/square.','/medium.').replace('/small.','/medium.')+'" loading="eager">':'<div class="no-img">📷</div>';
-        return '<div class="sp-cell"><div class="sp-img-wrap">'+img+'</div><div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'+(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')+'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div></div>';
-      }).join('');
-      return '<div class="genus-block"><div class="genus-banner"><span class="genus-name">'+genus+'</span><span class="genus-count">'+spp.length+' sp.</span></div><div class="sp-grid" style="grid-template-columns:repeat('+cols+',32mm)">'+cells+'</div></div>';
-    }).join('');
-    return '<div class="family-section"><div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. · '+genera.length+' gén.</span></div><div class="genera-wrap">'+genusBlocks+'</div></div>';
-  }).join('');
-  const pdfStyles='*{box-sizing:border-box;margin:0;padding:0}body{background:#ffffff;font-family:Arial,sans-serif;color:#1a1a1a;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #dddddd}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#1a1a1a}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#666666}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#f5f5f5;border-left:4px solid #1a56a0;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#1a56a0;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#666666}.genera-wrap{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start}.genus-block{display:inline-flex;flex-direction:column;break-inside:avoid}.genus-banner{display:flex;align-items:center;gap:5px;background:#f5f5f5;border-top:2px solid #1a7a2e;padding:3px 5px 3px 6px;width:100%}.genus-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#1a7a2e;font-weight:bold;white-space:nowrap}.genus-count{font-family:monospace;font-size:5.5pt;color:#666666}.sp-grid{display:grid;gap:1px;background:#ffffff}.sp-cell{background:#ffffff;overflow:hidden;width:32mm}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#f5f5f5}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999999;font-size:16pt}.sp-txt{background:#ffffff;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#1a7a2e;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#555555;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-obs{font-family:monospace;font-size:4.2pt;color:#999999;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#ffffff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
+        // First cell of first genus in family gets family+genus badges
+        // First cell of other genera gets genus badge only
+        let badges='';
+        if(gi===0&&si===0) badges='<div class="family-badge">'+fam+'</div><div class="genus-badge" style="top:14px">'+genus+'</div>';
+        else if(si===0) badges='<div class="genus-badge">'+genus+'</div>';
+        allItems+='<div class="sp-cell"><div class="sp-img-wrap">'+img+badges+'</div><div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'+(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')+'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div></div>';
+      });
+    });
+  });
+  const familySections='<div class="main-grid">'+allItems+'</div>';
+  const pdfStyles='*{box-sizing:border-box;margin:0;padding:0}body{background:#ffffff;font-family:Arial,sans-serif;color:#1a1a1a;padding:8mm;width:210mm;margin:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:10px;border-bottom:1px solid #dddddd}.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#1a1a1a}.page-header .meta{font-family:monospace;font-size:6.5pt;color:#666666}.family-section{width:100%;margin-bottom:8px}.family-banner{display:flex;align-items:baseline;gap:8px;background:#f5f5f5;border-left:4px solid #1a56a0;padding:4px 8px;margin-bottom:4px}.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#1a56a0;font-weight:bold}.family-count{font-family:monospace;font-size:6pt;color:#666666}.main-grid{display:grid;grid-template-columns:repeat(auto-fill,32mm);gap:1px;background:#ffffff}.family-badge{position:absolute;top:2px;left:2px;background:rgba(26,86,160,.85);color:#fff;font-family:Georgia,serif;font-style:italic;font-size:4.5pt;padding:1px 4px;border-radius:2px;max-width:28mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}.sp-cell{background:#ffffff;overflow:hidden;width:32mm;position:relative}.sp-img-wrap{width:32mm;height:32mm;overflow:hidden;background:#f5f5f5}.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999999;font-size:16pt}.sp-txt{background:#ffffff;padding:2px 3px 3px}.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#1a7a2e;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sp-com{font-size:4.8pt;color:#555555;line-height:1.3;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.genus-badge{position:absolute;top:2px;left:2px;background:rgba(26,122,46,.8);color:#fff;font-family:Georgia,serif;font-style:italic;font-size:4.5pt;padding:1px 4px;border-radius:2px;max-width:28mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1}.sp-obs{font-family:monospace;font-size:4.2pt;color:#999999;margin-top:1px}@media print{@page{margin:8mm;size:A4 portrait}html,body{background:#ffffff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.sp-cell{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
   const html='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>'+taxonName+'</title><style>'+pdfStyles+'</style></head><body><div style="position:fixed;inset:0;background:#ffffff;z-index:-1;-webkit-print-color-adjust:exact;print-color-adjust:exact"></div><div class="page-header"><span class="title">'+taxonName+(regionName?' · '+regionName:'')+'</span><span class="meta">'+sorted.length+' especies · BioExplorer</span></div>'+familySections+'<'+'script>const imgs=Array.from(document.querySelectorAll("img"));let pending=imgs.filter(i=>!i.complete||!i.naturalWidth).length;const tryPrint=()=>{pending--;if(pending<=0)doPrint();};const doPrint=()=>{window.focus();window.print();};if(pending===0){setTimeout(doPrint,300);}else{imgs.forEach(img=>{if(!img.complete||!img.naturalWidth){img.onload=tryPrint;img.onerror=tryPrint;}});setTimeout(doPrint,8000);}<'+'/script></body></html>';
   const win=window.open('','_blank');
   if(!win){ alert('Permite las ventanas emergentes para generar el PDF.'); return; }
@@ -1218,31 +1316,30 @@ async function openListPage(species,taxonName,regionName){
   })();
   const inatTileBase='https://api.inaturalist.org/v1/points/{z}/{x}/{y}.png?taxon_id=ID&color=%232d9e45&quality_grade=research&captive=false'+(activePlaceId?'&place_id='+activePlaceId:'');
   // Build family/genus sections — same structure as PDF but each cell has photo+map stacked
-  // One continuous grid per family. Genus name shown as badge on first cell of each genus.
-  const familySections=families.map(fam=>{
+  // ONE global grid — family and genus headers span all columns, cells flow continuously
+  let allItems='';
+  families.forEach(fam=>{
     const genera=Object.keys(byFamily[fam]).sort();
     const totalSp=genera.reduce((s,g)=>s+byFamily[fam][g].length,0);
-    const cells=genera.map(gen=>{
+    genera.forEach((gen,gi)=>{
       const spp=byFamily[fam][gen];
-      return spp.map((sp,si)=>{
+      spp.forEach((sp,si)=>{
         const photo=sp.photo?sp.photo.replace('/square.','/small.').replace('/medium.','/small.'):null;
-        const imgHtml=photo?'<img src="'+photo+'" loading="eager">':'<div class="no-img">\uD83D\uDCF7</div>';
-        // Only first cell of genus gets the genus badge
-        const genusBadge=si===0?'<div class="genus-badge">'+gen+'</div>':'';
-        return '<div class="sp-cell">'
-          +'<div class="sp-img-wrap">'+imgHtml+genusBadge+'</div>'
+        const imgHtml=photo?'<img src="'+photo+'" loading="eager">':'<div class="no-img">📷</div>';
+        let badges='';
+        if(gi===0&&si===0) badges='<div class="family-badge">'+fam+'</div><div class="genus-badge" style="top:14px">'+gen+'</div>';
+        else if(si===0) badges='<div class="genus-badge">'+gen+'</div>';
+        allItems+='<div class="sp-cell">'
+          +'<div class="sp-img-wrap">'+imgHtml+badges+'</div>'
           +'<div class="sp-map-wrap"><div class="spmap" id="lmap-'+sp.id+'"></div></div>'
           +'<div class="sp-txt"><div class="sp-sci">'+sp.name+'</div>'
           +(sp.common?'<div class="sp-com">'+sp.common+'</div>':'')
           +'<div class="sp-obs">'+fmtObs(sp.observations)+' obs.</div></div>'
           +'</div>';
-      }).join('');
-    }).join('');
-    return '<div class="family-section">'
-      +'<div class="family-banner"><span class="family-name">'+fam+'</span><span class="family-count">'+totalSp+' sp. \u00b7 '+genera.length+' g\u00e9n.</span></div>'
-      +'<div class="family-grid">'+cells+'</div>'
-      +'</div>';
-  }).join('');
+      });
+    });
+  });
+  const familySections='<div class="main-grid">'+allItems+'</div>';
   const css='*{box-sizing:border-box;margin:0;padding:0}'
     +'body{background:#ffffff;font-family:Arial,sans-serif;color:#1a1a1a;padding:5mm;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}'
     +'#topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);padding:5px 0 6px;border-bottom:1px solid #dddddd;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;backdrop-filter:blur(8px)}'
@@ -1252,27 +1349,26 @@ async function openListPage(species,taxonName,regionName){
     +'.page-header{display:flex;justify-content:space-between;align-items:center;padding-bottom:4px;margin-bottom:8px;border-bottom:1px solid #dddddd}'
     +'.page-header .title{font-family:Georgia,serif;font-style:italic;font-size:11pt;color:#1a1a1a}'
     +'.page-header .meta{font-family:monospace;font-size:6.5pt;color:#666666}'
-    +'.family-section{width:100%;margin-bottom:8px}'
-    +'.family-banner{display:flex;align-items:baseline;gap:8px;background:#ffffff;border-left:3px solid #1a56a0;padding:4px 8px;margin-bottom:4px}'
-    +'.family-name{font-family:Georgia,serif;font-style:italic;font-size:9pt;color:#1a56a0;font-weight:bold}'
-    +'.family-count{font-family:monospace;font-size:6pt;color:#666666}'
-    +'.family-grid{display:grid;grid-template-columns:repeat(auto-fill,32mm);gap:1px;background:#ffffff}'
-    +'.sp-cell{background:#ffffff;overflow:hidden;width:32mm;position:relative}'
+    +'.main-grid{display:grid;grid-template-columns:repeat(auto-fill,20mm);gap:1px;background:#ffffff}'
+    +'.family-badge{position:absolute;top:2px;left:2px;background:rgba(26,86,160,.85);color:#fff;font-family:Georgia,serif;font-style:italic;font-size:4.5pt;padding:1px 4px;border-radius:2px;max-width:28mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}'
+    +'.family-name{font-family:Georgia,serif;font-style:italic;font-size:7pt;color:#1a56a0;font-weight:bold}'
+    +'.family-count{font-family:monospace;font-size:5pt;color:#666666}'
+    +'.sp-cell{background:#ffffff;overflow:hidden;width:20mm;position:relative}'
     +'.genus-badge{position:absolute;top:2px;left:2px;background:rgba(26,122,46,.85);color:#fff;'
-    +'font-family:Georgia,serif;font-style:italic;font-size:4.5pt;padding:1px 4px;border-radius:2px;'
+    +'font-family:Georgia,serif;font-style:italic;font-size:3.5pt;padding:1px 3px;border-radius:2px;'
     +'max-width:28mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:1}'
-    +'.sp-img-wrap{width:32mm;height:20mm;overflow:hidden;background:#ffffff}'
+    +'.sp-img-wrap{width:20mm;height:20mm;overflow:hidden;background:#ffffff}'
     +'.sp-img-wrap img{width:100%;height:100%;object-fit:cover;display:block}'
     +'.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#999999;font-size:14pt}'
-    +'.sp-map-wrap{width:32mm;height:20mm;overflow:hidden;background:#dde8dd}'
+    +'.sp-map-wrap{width:20mm;height:20mm;overflow:hidden;background:#dde8dd}'
     +'.spmap{width:100%;height:100%}'
     +'.leaflet-container{background:#e8e4da!important;margin:0!important}'
-    +'.sp-txt{padding:2px 3px 3px}'
-    +'.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:5.2pt;color:#1a7a2e;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
-    +'.sp-com{font-size:4.8pt;color:#555555;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
-    +'.sp-obs{font-family:monospace;font-size:4.2pt;color:#999999;margin-top:1px}'
+    +'.sp-txt{padding:1px 2px 2px}'
+    +'.sp-sci{font-family:Georgia,serif;font-style:italic;font-size:4pt;color:#1a7a2e;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-com{font-size:3.5pt;color:#555555;margin-top:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}'
+    +'.sp-obs{font-family:monospace;font-size:3pt;color:#999999;margin-top:1px}'
     +'@media screen and (max-width:600px){.sp-cell{width:44vw}.sp-img-wrap{height:44vw}.sp-map-wrap{height:44vw}#printBtn{font-size:.82rem;padding:7px 16px}}'
-    +'@media print{@page{margin:5mm;size:A4 portrait}#topbar{display:none}body{background:#ffffff!important}.genus-block{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
+    +'@media print{@page{margin:4mm;size:A5 landscape}#topbar{display:none}body{background:#ffffff!important;padding:3mm}.sp-cell{break-inside:avoid}.family-section{break-inside:avoid}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}';
   const idsJ=JSON.stringify(species.map(s=>s.id));
   const obsJ=JSON.stringify(obsCache);
   const bndsJ=JSON.stringify(sharedBounds);
@@ -1317,6 +1413,440 @@ document.getElementById('authBtn').addEventListener('click',handleAuth);
 document.getElementById('mySpeciesBtn').addEventListener('click',showMySpecies);
 document.getElementById('logoBtn').addEventListener('click',()=>{ navStack.length=0; history.replaceState({depth:0},'',''); repaint(); });
 updateAuthUI(); updateSeenCounter(); renderHome();
+
+
+// ══ EXCEL EXPORT ═════════════════════════════════════════════════
+var _exceljsLoaded=false;
+function loadExcelJS(){
+  return new Promise(function(resolve,reject){
+    if(_exceljsLoaded&&window.ExcelJS) return resolve();
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+    s.onload=function(){ _exceljsLoaded=true; resolve(); };
+    s.onerror=function(){ reject(new Error('No se pudo cargar ExcelJS')); };
+    document.head.appendChild(s);
+  });
+}
+
+var _xlPlaceCache=null;
+async function xlResolvePlace(){
+  if(activePlaceId) return {id:activePlaceId,name:activePlaceName};
+  if(_xlPlaceCache) return _xlPlaceCache;
+  try{
+    var r=await fetch(API+'/places/autocomplete?q='+encodeURIComponent('Iberian Peninsula')+'&per_page=10');
+    var d=await r.json();
+    var p=(d.results||[]).find(function(x){ return /iberian|ib[e\u00e9]rica/i.test(x.name||''); });
+    if(!p){
+      var r2=await fetch(API+'/places/autocomplete?q=Spain&per_page=10');
+      var d2=await r2.json();
+      p=(d2.results||[]).find(function(x){ return /^spain$|^espa/i.test(x.name||''); })||(d2.results||[])[0];
+    }
+    if(p){ _xlPlaceCache={id:p.id,name:p.display_name||p.name}; return _xlPlaceCache; }
+  }catch(e){}
+  return null;
+}
+
+// ── Taxonomy enrichment ───────────────────────────────────────────
+var xlRankCache={};
+var XL_RANKS=['kingdom','phylum','class','order','family','subfamily','genus'];
+async function xlEnrichTaxonomy(species,onProgress){
+  var needed=new Set();
+  species.forEach(function(sp){
+    (sp.ancestor_ids||[]).forEach(function(id){ if(!(id in xlRankCache)) needed.add(id); });
+  });
+  var ids=[...needed];
+  for(var i=0;i<ids.length;i+=100){
+    try{
+      var r=await fetch(API+'/taxa?id='+ids.slice(i,i+100).join(',')+'&per_page=100&locale=es');
+      if(r.ok){
+        var d=await r.json();
+        (d.results||[]).forEach(function(t){ xlRankCache[t.id]={rank:t.rank,name:t.name}; });
+      }
+    }catch(e){}
+    if(onProgress) onProgress('Taxonom\u00eda '+Math.min(i+100,ids.length)+'/'+ids.length);
+    if(i+100<ids.length) await new Promise(function(r){ setTimeout(r,60); });
+  }
+  ids.forEach(function(id){ if(!(id in xlRankCache)) xlRankCache[id]=null; });
+  species.forEach(function(sp){
+    sp._tax={};
+    (sp.ancestor_ids||[]).forEach(function(id){
+      var t=xlRankCache[id]; if(!t) return;
+      if(XL_RANKS.indexOf(t.rank)>=0) sp._tax[t.rank]=t.name;
+    });
+  });
+}
+
+// ── Base map (fetched once, reused) ───────────────────────────────
+var XL_BBOX={lonMin:-10.0,lonMax:4.2,latMin:35.6,latMax:44.2};
+var XL_Z=6, XL_TILE=256, XL_OUT=150;
+var _xlBaseCanvas=null;
+function xlLon2x(lon,z){ return (lon+180)/360*Math.pow(2,z); }
+function xlLat2y(lat,z){
+  var r=lat*Math.PI/180;
+  return (1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2*Math.pow(2,z);
+}
+function xlLoadImg(src,useCors,timeoutMs){
+  return new Promise(function(resolve){
+    var done=false;
+    var img=new Image();
+    if(useCors!==false) img.crossOrigin='anonymous';
+    var finish=function(v){ if(done) return; done=true; resolve(v); };
+    img.onload=function(){ finish(img.naturalWidth?img:null); };
+    img.onerror=function(){ finish(null); };
+    setTimeout(function(){ finish(null); },timeoutMs||9000);
+    img.src=src;
+  });
+}
+async function xlBuildBaseMap(bbox){
+  if(_xlBaseCanvas) return _xlBaseCanvas;
+  var x0=Math.floor(xlLon2x(bbox.lonMin,XL_Z)), x1=Math.floor(xlLon2x(bbox.lonMax,XL_Z));
+  var y0=Math.floor(xlLat2y(bbox.latMax,XL_Z)), y1=Math.floor(xlLat2y(bbox.latMin,XL_Z));
+  var cv=document.createElement('canvas');
+  cv.width=(x1-x0+1)*XL_TILE; cv.height=(y1-y0+1)*XL_TILE;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#eef2f4'; ctx.fillRect(0,0,cv.width,cv.height);
+  var jobs=[];
+  for(var tx=x0;tx<=x1;tx++){
+    for(var ty=y0;ty<=y1;ty++){
+      (function(tx,ty){
+        jobs.push(xlLoadImg('https://a.basemaps.cartocdn.com/light_all/'+XL_Z+'/'+tx+'/'+ty+'.png')
+          .then(function(img){ if(img) ctx.drawImage(img,(tx-x0)*XL_TILE,(ty-y0)*XL_TILE); }));
+      })(tx,ty);
+    }
+  }
+  await Promise.all(jobs);
+  cv._x0=x0; cv._y0=y0;
+  _xlBaseCanvas=cv;
+  return cv;
+}
+async function xlSpeciesMap(taxonId,placeId,base,bbox){
+  var pts=[];
+  try{
+    var r=await fetch(API+'/observations?taxon_id='+taxonId+'&place_id='+placeId
+      +'&verifiable=true&captive=false&geo=true&per_page=200&order_by=votes');
+    if(r.ok){
+      var d=await r.json();
+      (d.results||[]).forEach(function(o){
+        if(!o.location) return;
+        var p=o.location.split(',');
+        var la=parseFloat(p[0]), ln=parseFloat(p[1]);
+        if(!isNaN(la)&&!isNaN(ln)) pts.push([la,ln]);
+      });
+    }
+  }catch(e){}
+  var out=document.createElement('canvas');
+  out.width=XL_OUT; out.height=XL_OUT;
+  var ctx=out.getContext('2d');
+  var px0=(xlLon2x(bbox.lonMin,XL_Z)-base._x0)*XL_TILE;
+  var px1=(xlLon2x(bbox.lonMax,XL_Z)-base._x0)*XL_TILE;
+  var py0=(xlLat2y(bbox.latMax,XL_Z)-base._y0)*XL_TILE;
+  var py1=(xlLat2y(bbox.latMin,XL_Z)-base._y0)*XL_TILE;
+  var sw=px1-px0, sh=py1-py0;
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,XL_OUT,XL_OUT);
+  ctx.drawImage(base,px0,py0,sw,sh,0,0,XL_OUT,XL_OUT);
+  ctx.fillStyle='rgba(200,50,35,0.72)';
+  pts.forEach(function(p){
+    var gx=(xlLon2x(p[1],XL_Z)-base._x0)*XL_TILE;
+    var gy=(xlLat2y(p[0],XL_Z)-base._y0)*XL_TILE;
+    var cx=(gx-px0)/sw*XL_OUT, cy=(gy-py0)/sh*XL_OUT;
+    if(cx<0||cy<0||cx>XL_OUT||cy>XL_OUT) return;
+    ctx.beginPath(); ctx.arc(cx,cy,2.1,0,Math.PI*2); ctx.fill();
+  });
+  ctx.strokeStyle='#d6dde1'; ctx.lineWidth=1; ctx.strokeRect(0.5,0.5,XL_OUT-1,XL_OUT-1);
+  try{ return out.toDataURL('image/jpeg',0.62); }catch(e){ return null; }
+}
+function xlPhotoVariants(url){
+  var out=[];
+  var swap=function(size){
+    return url.replace('/original.','/'+size+'.').replace('/large.','/'+size+'.')
+              .replace('/medium.','/'+size+'.').replace('/small.','/'+size+'.')
+              .replace('/square.','/'+size+'.');
+  };
+  out.push(swap('small'));
+  out.push(swap('medium'));
+  out.push(url);
+  out.push(swap('square'));
+  // de-duplicate while keeping order
+  var seen={}, uniq=[];
+  out.forEach(function(u){ if(u&&!seen[u]){ seen[u]=1; uniq.push(u); } });
+  return uniq;
+}
+// Fetch an image through a resizing proxy and return a data URL.
+// weserv.nl sends CORS headers and resizes server-side, so the download is
+// tiny and the canvas never gets tainted.
+function xlFetchDataUrl(url,timeoutMs){
+  return new Promise(function(resolve){
+    var done=false;
+    var finish=function(v){ if(done) return; done=true; resolve(v); };
+    var timer=setTimeout(function(){ finish(null); },timeoutMs||12000);
+    fetch(url,{mode:'cors'}).then(function(r){
+      if(!r.ok) throw new Error('bad status');
+      return r.blob();
+    }).then(function(blob){
+      if(!blob||blob.size<100) throw new Error('empty');
+      var fr=new FileReader();
+      fr.onload=function(){ clearTimeout(timer); finish(fr.result); };
+      fr.onerror=function(){ clearTimeout(timer); finish(null); };
+      fr.readAsDataURL(blob);
+    }).catch(function(){ clearTimeout(timer); finish(null); });
+  });
+}
+
+function xlWeservUrl(url,size){
+  var clean=url.replace(/^https?:\/\//,'');
+  return 'https://images.weserv.nl/?url='+encodeURIComponent(clean)
+    +'&w='+size+'&h='+size+'&fit=cover&a=attention&output=jpg&q=62';
+}
+
+async function xlSpeciesPhoto(url){
+  if(!url) return null;
+  var S=150;
+  var variants=xlPhotoVariants(url);
+
+  // 1) Resizing proxy — server-side crop, CORS-safe, ~5 KB per image
+  for(var i=0;i<Math.min(variants.length,2);i++){
+    var d=await xlFetchDataUrl(xlWeservUrl(variants[i],S),12000);
+    if(d&&d.indexOf('data:image')===0&&d.length>500) return d;
+  }
+
+  // 2) Direct load into a canvas (works when the host sends CORS headers)
+  var img=null;
+  for(var j=0;j<variants.length&&!img;j++){
+    img=await xlLoadImg(variants[j],true,7000);
+  }
+  // 3) Generic CORS proxy as a last resort
+  if(!img){
+    for(var k=0;k<Math.min(variants.length,2)&&!img;k++){
+      img=await xlLoadImg('https://corsproxy.io/?'+encodeURIComponent(variants[k]),true,9000);
+    }
+  }
+  if(!img) return null;
+  var cv=document.createElement('canvas'); cv.width=S; cv.height=S;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#f4f4f4'; ctx.fillRect(0,0,S,S);
+  var side=Math.min(img.width,img.height);
+  if(!side) return null;
+  ctx.drawImage(img,(img.width-side)/2,(img.height-side)/2,side,side,0,0,S,S);
+  try{ return cv.toDataURL('image/jpeg',0.62); }catch(e){ return null; }
+}
+function xlB64(d){ return d.split(',')[1]; }
+
+// ── Research-grade filter ─────────────────────────────────────────
+async function xlResearchIds(taxonId,placeId,onProgress){
+  var ids=new Set();
+  var placeParam=placeId?('&place_id='+placeId):'';
+  for(var page=1;page<=25;page++){
+    try{
+      var r=await fetch(API+'/observations/species_counts?taxon_id='+taxonId+placeParam
+        +'&quality_grade=research&captive=false&per_page=100&page='+page+'&locale=es');
+      if(!r.ok) break;
+      var d=await r.json();
+      var res=d.results||[];
+      res.forEach(function(x){ if(x.taxon) ids.add(x.taxon.id); });
+      if(onProgress) onProgress('Verificando '+ids.size);
+      if(res.length<100) break;
+    }catch(e){ break; }
+    await new Promise(function(r){ setTimeout(r,60); });
+  }
+  return ids;
+}
+
+// ── Workbook ──────────────────────────────────────────────────────
+var XL_HEAD_BG='FF14532D', XL_HEAD_FG='FFFFFFFF';
+var XL_BAND='FFF3F7F4', XL_LINE='FFD9E2DC';
+function xlBorder(){
+  return {top:{style:'thin',color:{argb:XL_LINE}},left:{style:'thin',color:{argb:XL_LINE}},
+          bottom:{style:'thin',color:{argb:XL_LINE}},right:{style:'thin',color:{argb:XL_LINE}}};
+}
+
+async function exportSpeciesExcel(species,taxonName,opts,statusFn){
+  var withMaps=opts&&opts.maps;
+  var researchOnly=opts&&opts.research;
+  await loadExcelJS();
+  var placeId=null, placeName='';
+  if(withMaps){
+    var place=await xlResolvePlace();
+    if(place){ placeId=place.id; placeName=place.name; }
+  }
+  var bbox=XL_BBOX;
+
+  if(researchOnly){
+    statusFn('Verificando\u2026');
+    var okIds=await xlResearchIds(spState.taxonId,activePlaceId||null,statusFn);
+    if(okIds.size){
+      species=species.filter(function(sp){ return okIds.has(sp.id); });
+    }
+    if(!species.length) throw new Error('Ninguna especie tiene observaciones verificadas.');
+  }
+
+  statusFn('Taxonom\u00eda\u2026');
+  await xlEnrichTaxonomy(species,statusFn);
+
+  var base=null;
+  if(withMaps&&placeId){ statusFn('Mapa base\u2026'); base=await xlBuildBaseMap(bbox); }
+
+  var wb=new ExcelJS.Workbook();
+  wb.creator='BioExplorer';
+  wb.created=new Date();
+  var ws=wb.addWorksheet(String(taxonName||'Especies').substring(0,28).replace(/[\\\/\?\*\[\]:]/g,''),
+    {views:[{state:'frozen',ySplit:2}]});
+
+  var cols=[
+    {header:'Reino',        key:'kingdom',  width:16},
+    {header:'Filo',         key:'phylum',   width:18},
+    {header:'Clase',        key:'class',    width:18},
+    {header:'Orden',        key:'order',    width:20},
+    {header:'Familia',      key:'family',   width:22},
+    {header:'Subfamilia',   key:'subfamily',width:20},
+    {header:'G\u00e9nero',  key:'genus',    width:20},
+    {header:'Especie',      key:'species',  width:28},
+    {header:'Nombre com\u00fan',key:'common',width:26},
+    {header:'Foto',         key:'photo',    width:17}
+  ];
+  if(withMaps) cols.push({header:'Distribuci\u00f3n',key:'map',width:17});
+  ws.columns=cols;
+  var nCols=cols.length;
+  var lastCol=String.fromCharCode(64+nCols);
+
+  // Title row
+  ws.spliceRows(1,0,[]);
+  ws.mergeCells('A1:'+lastCol+'1');
+  var title=ws.getCell('A1');
+  title.value=String(taxonName||'Especies')+(placeName?'   \u00b7   '+placeName:'')
+    +'   \u00b7   '+species.length+' especies'+(researchOnly?'   \u00b7   solo verificadas':'');
+  title.font={name:'Calibri',size:13,bold:true,color:{argb:XL_HEAD_FG}};
+  title.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF0B3D22'}};
+  title.alignment={vertical:'middle',horizontal:'left',indent:1};
+  ws.getRow(1).height=30;
+
+  // Header row
+  var hdr=ws.getRow(2);
+  hdr.height=22;
+  hdr.eachCell(function(cell){
+    cell.font={name:'Calibri',size:10,bold:true,color:{argb:XL_HEAD_FG}};
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:XL_HEAD_BG}};
+    cell.alignment={vertical:'middle',horizontal:'center'};
+    cell.border=xlBorder();
+  });
+  ws.autoFilter={from:'A2',to:lastCol+'2'};
+
+  var sorted=[...species].sort(function(a,b){
+    var A=a._tax||{}, B=b._tax||{};
+    var k1=(A.class||'')+'|'+(A.order||'')+'|'+(A.family||'')+'|'+a.name;
+    var k2=(B.class||'')+'|'+(B.order||'')+'|'+(B.family||'')+'|'+b.name;
+    return k1.localeCompare(k2);
+  });
+
+  sorted.forEach(function(sp,i){
+    var t=sp._tax||{};
+    var row=ws.addRow({
+      kingdom:t.kingdom||'', phylum:t.phylum||'', class:t.class||'',
+      order:t.order||'', family:t.family||'', subfamily:t.subfamily||'',
+      genus:t.genus||'', species:sp.name, common:sp.common||''
+    });
+    row.height=withMaps?114:114;
+    var banded=(i%2===1);
+    row.eachCell({includeEmpty:true},function(cell,colNumber){
+      cell.border=xlBorder();
+      cell.alignment={vertical:'middle',wrapText:false,
+        horizontal:(colNumber>=10)?'center':'left',indent:(colNumber<10)?1:0};
+      cell.font={name:'Calibri',size:10,color:{argb:'FF1F2A24'}};
+      if(banded) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:XL_BAND}};
+    });
+    // Scientific names in italic
+    row.getCell(7).font={name:'Calibri',size:10,italic:true,color:{argb:'FF14532D'}};
+    row.getCell(8).font={name:'Calibri',size:10,italic:true,bold:true,color:{argb:'FF14532D'}};
+    row.getCell(9).font={name:'Calibri',size:10,color:{argb:'FF5A6B60'}};
+  });
+
+  var CONC=6;
+  for(var i=0;i<sorted.length;i+=CONC){
+    var batch=sorted.slice(i,i+CONC);
+    var results=await Promise.all(batch.map(async function(sp){
+      var photo=await xlSpeciesPhoto(sp.photo);
+      var map=(withMaps&&base&&placeId)?await xlSpeciesMap(sp.id,placeId,base,bbox):null;
+      return {photo:photo,map:map};
+    }));
+    results.forEach(function(res,j){
+      var rowIdx=i+j+3;
+      if(res.photo){
+        var id1=wb.addImage({base64:xlB64(res.photo),extension:'jpeg'});
+        ws.addImage(id1,{tl:{col:9.12,row:rowIdx-1+0.07},ext:{width:106,height:106}});
+      }
+      if(res.map){
+        var id2=wb.addImage({base64:xlB64(res.map),extension:'jpeg'});
+        ws.addImage(id2,{tl:{col:10.12,row:rowIdx-1+0.07},ext:{width:106,height:106}});
+      }
+    });
+    statusFn('Im\u00e1genes '+Math.min(i+CONC,sorted.length)+'/'+sorted.length);
+  }
+
+  statusFn('Generando\u2026');
+  var buf=await wb.xlsx.writeBuffer();
+  var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download=String(taxonName||'especies').replace(/[^\w\-]+/g,'_')+(researchOnly?'_verificadas':'')+(withMaps?'_con_mapas':'')+'.xlsx';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); },4000);
+}
+
+// ── Option chooser ────────────────────────────────────────────────
+function xlAskOptions(count){
+  return new Promise(function(resolve){
+    var ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1200;display:flex;'
+      +'align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)';
+    ov.innerHTML='<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;'
+      +'padding:26px;max-width:390px;width:100%">'
+      +'<div style="font-family:\'Fraunces\',serif;font-style:italic;font-size:1.2rem;margin-bottom:6px">Exportar a Excel</div>'
+      +'<div style="color:var(--muted);font-size:.78rem;margin-bottom:16px;line-height:1.5">'
+      +count+' especies cargadas.</div>'
+      +'<label style="display:flex;align-items:flex-start;gap:9px;padding:11px 12px;margin-bottom:14px;'
+      +'background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer">'
+      +'<input type="checkbox" id="xlResearch" checked style="margin-top:2px;accent-color:var(--accent);cursor:pointer">'
+      +'<span style="font-size:.76rem;line-height:1.45">Solo especies verificadas'
+      +'<br><span style="color:var(--dim);font-size:.7rem">Descarta observaciones sin confirmar por la comunidad</span></span>'
+      +'</label>'
+      +'<button id="xlWith" style="width:100%;padding:11px;margin-bottom:8px;background:var(--accent);'
+      +'color:#0d1117;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer">'
+      +'Con mapa de distribuci\u00f3n</button>'
+      +'<button id="xlWithout" style="width:100%;padding:11px;margin-bottom:8px;background:var(--surface2);'
+      +'color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:.85rem;cursor:pointer">'
+      +'Solo foto <span style="color:var(--dim)">\u00b7 m\u00e1s r\u00e1pido</span></button>'
+      +'<button id="xlCancel" style="width:100%;padding:8px;background:none;border:none;'
+      +'color:var(--dim);font-size:.8rem;cursor:pointer">Cancelar</button>'
+      +'</div>';
+    var research=function(){ var c=ov.querySelector('#xlResearch'); return !!(c&&c.checked); };
+    var done=function(v){ if(ov.parentNode) document.body.removeChild(ov); resolve(v); };
+    ov.querySelector('#xlWith').addEventListener('click',function(){ done({maps:true,research:research()}); });
+    ov.querySelector('#xlWithout').addEventListener('click',function(){ done({maps:false,research:research()}); });
+    ov.querySelector('#xlCancel').addEventListener('click',function(){ done(null); });
+    ov.addEventListener('click',function(e){ if(e.target===ov) done(null); });
+    document.body.appendChild(ov);
+  });
+}
+
+document.getElementById('spXlsBtn').addEventListener('click',async function(){
+  var btn=document.getElementById('spXlsBtn');
+  if(btn.disabled) return;
+  var all=spState.loaded||[];
+  if(!all.length){ alert('No hay especies cargadas.'); return; }
+  var choice=await xlAskOptions(all.length);
+  if(!choice) return;
+  var original=btn.innerHTML;
+  btn.disabled=true;
+  var setStatus=function(t){ btn.textContent=t; };
+  setStatus('\u2026');
+  try{
+    await exportSpeciesExcel(all,spState.taxonName||'Especies',choice,setStatus);
+  }catch(e){
+    alert('Error al generar el Excel: '+e.message);
+  }finally{
+    btn.disabled=false; btn.innerHTML=original;
+  }
+});
 
 </script>
 </body>
