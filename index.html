@@ -383,15 +383,29 @@ const cache={};
 function clearCache(){ Object.keys(cache).forEach(k=>delete cache[k]); }
 
 async function fetchChildren(parentId,rank){
-  let all=[],page=1;
-  while(true){
-    const r=await fetch(API+'/taxa?taxon_id='+parentId+'&rank='+rank+'&per_page=500&page='+page+'&order_by=observations_count&locale=es');
-    if(!r.ok) break;
-    const d=await r.json(); const res=d.results||[];
-    all=all.concat(res);
-    if(res.length<500||page>=10) break;
-    page++; await new Promise(r=>setTimeout(r,80));
-  }
+  const base=API+'/taxa?taxon_id='+parentId+'&rank='+rank
+    +'&per_page=200&order_by=observations_count&locale=es';
+  let first;
+  try{
+    const r=await fetch(base+'&page=1');
+    if(!r.ok) return [];
+    first=await r.json();
+  }catch(e){ return []; }
+  let all=first.results||[];
+  const total=first.total_results||all.length;
+  if(all.length>=total||!all.length) return all;
+  const pages=Math.min(10,Math.ceil(total/200));
+  const rest=[];
+  for(let p=2;p<=pages;p++) rest.push(p);
+  const chunks=await Promise.all(rest.map(async function(p){
+    try{
+      const r=await fetch(base+'&page='+p);
+      if(!r.ok) return [];
+      const d=await r.json();
+      return d.results||[];
+    }catch(e){ return []; }
+  }));
+  chunks.forEach(function(ch){ all=all.concat(ch); });
   return all;
 }
 async function fetchSpeciesGlobal(parentId){
@@ -411,23 +425,75 @@ async function fetchSpeciesInPlace(parentId,placeId){
   }
   return all.map(r=>({id:r.taxon.id,name:r.taxon.name,common:r.taxon.preferred_common_name||'',photo:r.taxon.default_photo?.medium_url||r.taxon.default_photo?.url||null,observations:r.count||0,inatUrl:'https://www.inaturalist.org/taxa/'+r.taxon.id,wikipedia:r.taxon.wikipedia_url||null,ancestor_ids:r.taxon.ancestor_ids||[]}));
 }
-async function fetchChildrenInPlace(parentId,rank,placeId){
-  let all=[];
-  for(let page=1;page<=5;page++){
-    const r=await fetch(API+'/observations/species_counts?taxon_id='+parentId+'&place_id='+placeId+'&verifiable=true&captive=false&per_page=100&page='+page+'&locale=es');
-    if(!r.ok) break;
-    const d=await r.json(); all=all.concat(d.results||[]);
-    if((d.results||[]).length<100) break;
-  }
-  if(!all.length) return [];
-  const ancIds=new Set(); all.forEach(r=>(r.taxon.ancestor_ids||[]).forEach(id=>ancIds.add(id)));
-  const ids=[...ancIds]; const found={};
-  for(let i=0;i<ids.length;i+=100){
-    try{ const r=await fetch(API+'/taxa?id='+ids.slice(i,i+100).join(',')+'&per_page=100&locale=es'); const d=await r.json(); (d.results||[]).forEach(t=>{ if(t.rank===rank) found[t.id]=t; }); }catch(e){}
-    if(i+100<ids.length) await new Promise(r=>setTimeout(r,100));
-  }
-  return Object.values(found).filter(t=>ancIds.has(t.id));
+// Shared cache for /taxa?id= lookups so deeper navigation reuses them
+var taxaByIdCache={};
+
+// Fetch page 1 to learn the total, then request the remaining pages at once
+async function pagedSpeciesCounts(parentId,placeId,maxPages){
+  const PER=100;
+  const base=API+'/observations/species_counts?taxon_id='+parentId
+    +'&place_id='+placeId+'&verifiable=true&captive=false&per_page='+PER+'&locale=es';
+  let first;
+  try{
+    const r=await fetch(base+'&page=1');
+    if(!r.ok) return [];
+    first=await r.json();
+  }catch(e){ return []; }
+  let all=first.results||[];
+  const total=first.total_results||all.length;
+  if(all.length<PER||total<=PER) return all;
+  const pages=Math.min(maxPages,Math.ceil(total/PER));
+  const rest=[];
+  for(let p=2;p<=pages;p++) rest.push(p);
+  const chunks=await Promise.all(rest.map(async function(p){
+    try{
+      const r=await fetch(base+'&page='+p);
+      if(!r.ok) return [];
+      const d=await r.json();
+      return d.results||[];
+    }catch(e){ return []; }
+  }));
+  chunks.forEach(function(ch){ all=all.concat(ch); });
+  return all;
 }
+
+// Resolve many taxon ids at once, in parallel batches, using the shared cache
+async function resolveTaxa(ids){
+  const missing=ids.filter(function(id){ return !(id in taxaByIdCache); });
+  const batches=[];
+  for(let i=0;i<missing.length;i+=100) batches.push(missing.slice(i,i+100));
+  const CONC=4;
+  for(let i=0;i<batches.length;i+=CONC){
+    await Promise.all(batches.slice(i,i+CONC).map(async function(b){
+      try{
+        const r=await fetch(API+'/taxa?id='+b.join(',')+'&per_page=100&locale=es');
+        if(!r.ok) return;
+        const d=await r.json();
+        (d.results||[]).forEach(function(t){ taxaByIdCache[t.id]=t; });
+      }catch(e){}
+    }));
+  }
+  missing.forEach(function(id){ if(!(id in taxaByIdCache)) taxaByIdCache[id]=null; });
+  const out={};
+  ids.forEach(function(id){ if(taxaByIdCache[id]) out[id]=taxaByIdCache[id]; });
+  return out;
+}
+
+async function fetchChildrenInPlace(parentId,rank,placeId){
+  const all=await pagedSpeciesCounts(parentId,placeId,5);
+  if(!all.length) return [];
+  const ancIds=new Set();
+  all.forEach(function(r){ (r.taxon.ancestor_ids||[]).forEach(function(id){ ancIds.add(id); }); });
+  const resolved=await resolveTaxa([...ancIds]);
+  const found={};
+  Object.keys(resolved).forEach(function(id){
+    const t=resolved[id];
+    if(t&&t.rank===rank) found[t.id]=t;
+  });
+  return Object.values(found);
+}
+
+
 async function cachedChildren(parentId,rank){
   const k='ch_'+parentId+'_'+rank+'_'+(activePlaceId||'g');
   if(!cache[k]) cache[k]=activePlaceId?fetchChildrenInPlace(parentId,rank,activePlaceId):fetchChildren(parentId,rank);
@@ -1477,9 +1543,15 @@ async function xlEnrichTaxonomy(species,onProgress){
 }
 
 // ── Base map (fetched once, reused) ───────────────────────────────
-var XL_BBOX={lonMin:-10.0,lonMax:4.2,latMin:35.6,latMax:44.2};
-var XL_Z=6, XL_TILE=256, XL_OUT=150;
-var _xlBaseCanvas=null;
+// ── Map presets ───────────────────────────────────────────────────
+var XL_MAPS={
+  region:{bbox:{lonMin:-10.0,lonMax:4.2,latMin:35.6,latMax:44.2},z:7,w:150,h:150,dot:2.0,
+          autoZoom:true,minSpanPx:300,padPct:0.15,padMinPx:28},
+  global:{bbox:{lonMin:-172,lonMax:179.5,latMin:-56,latMax:80},z:2,w:190,h:105,dot:1.7}
+};
+var XL_TILE=256;
+var _xlBaseCache={};
+
 function xlLon2x(lon,z){ return (lon+180)/360*Math.pow(2,z); }
 function xlLat2y(lat,z){
   var r=lat*Math.PI/180;
@@ -1497,10 +1569,13 @@ function xlLoadImg(src,useCors,timeoutMs){
     img.src=src;
   });
 }
-async function xlBuildBaseMap(bbox){
-  if(_xlBaseCanvas) return _xlBaseCanvas;
-  var x0=Math.floor(xlLon2x(bbox.lonMin,XL_Z)), x1=Math.floor(xlLon2x(bbox.lonMax,XL_Z));
-  var y0=Math.floor(xlLat2y(bbox.latMax,XL_Z)), y1=Math.floor(xlLat2y(bbox.latMin,XL_Z));
+
+// Build (once per preset) the base map canvas
+async function xlBuildBaseMap(key){
+  if(_xlBaseCache[key]) return _xlBaseCache[key];
+  var p=XL_MAPS[key], b=p.bbox, z=p.z;
+  var x0=Math.floor(xlLon2x(b.lonMin,z)), x1=Math.floor(xlLon2x(b.lonMax,z));
+  var y0=Math.floor(xlLat2y(b.latMax,z)), y1=Math.floor(xlLat2y(b.latMin,z));
   var cv=document.createElement('canvas');
   cv.width=(x1-x0+1)*XL_TILE; cv.height=(y1-y0+1)*XL_TILE;
   var ctx=cv.getContext('2d');
@@ -1509,20 +1584,23 @@ async function xlBuildBaseMap(bbox){
   for(var tx=x0;tx<=x1;tx++){
     for(var ty=y0;ty<=y1;ty++){
       (function(tx,ty){
-        jobs.push(xlLoadImg('https://a.basemaps.cartocdn.com/light_all/'+XL_Z+'/'+tx+'/'+ty+'.png')
+        jobs.push(xlLoadImg('https://a.basemaps.cartocdn.com/light_all/'+z+'/'+tx+'/'+ty+'.png',true,12000)
           .then(function(img){ if(img) ctx.drawImage(img,(tx-x0)*XL_TILE,(ty-y0)*XL_TILE); }));
       })(tx,ty);
     }
   }
   await Promise.all(jobs);
   cv._x0=x0; cv._y0=y0;
-  _xlBaseCanvas=cv;
+  _xlBaseCache[key]=cv;
   return cv;
 }
-async function xlSpeciesMap(taxonId,placeId,base,bbox){
+
+// Fetch observation coordinates for one species
+async function xlObsPoints(taxonId,placeId){
   var pts=[];
   try{
-    var r=await fetch(API+'/observations?taxon_id='+taxonId+'&place_id='+placeId
+    var r=await fetch(API+'/observations?taxon_id='+taxonId
+      +(placeId?('&place_id='+placeId):'')
       +'&verifiable=true&captive=false&geo=true&per_page=200&order_by=votes');
     if(r.ok){
       var d=await r.json();
@@ -1534,27 +1612,82 @@ async function xlSpeciesMap(taxonId,placeId,base,bbox){
       });
     }
   }catch(e){}
-  var out=document.createElement('canvas');
-  out.width=XL_OUT; out.height=XL_OUT;
-  var ctx=out.getContext('2d');
-  var px0=(xlLon2x(bbox.lonMin,XL_Z)-base._x0)*XL_TILE;
-  var px1=(xlLon2x(bbox.lonMax,XL_Z)-base._x0)*XL_TILE;
-  var py0=(xlLat2y(bbox.latMax,XL_Z)-base._y0)*XL_TILE;
-  var py1=(xlLat2y(bbox.latMin,XL_Z)-base._y0)*XL_TILE;
-  var sw=px1-px0, sh=py1-py0;
-  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,XL_OUT,XL_OUT);
-  ctx.drawImage(base,px0,py0,sw,sh,0,0,XL_OUT,XL_OUT);
-  ctx.fillStyle='rgba(200,50,35,0.72)';
-  pts.forEach(function(p){
-    var gx=(xlLon2x(p[1],XL_Z)-base._x0)*XL_TILE;
-    var gy=(xlLat2y(p[0],XL_Z)-base._y0)*XL_TILE;
-    var cx=(gx-px0)/sw*XL_OUT, cy=(gy-py0)/sh*XL_OUT;
-    if(cx<0||cy<0||cx>XL_OUT||cy>XL_OUT) return;
-    ctx.beginPath(); ctx.arc(cx,cy,2.1,0,Math.PI*2); ctx.fill();
-  });
-  ctx.strokeStyle='#d6dde1'; ctx.lineWidth=1; ctx.strokeRect(0.5,0.5,XL_OUT-1,XL_OUT-1);
-  try{ return out.toDataURL('image/jpeg',0.62); }catch(e){ return null; }
+  return pts;
 }
+
+// Render a distribution map for one species
+// Render a distribution map for one species.
+// For the regional map the view auto-zooms to where the records actually are.
+function xlRenderMap(key,base,pts){
+  var p=XL_MAPS[key], b=p.bbox, z=p.z;
+  var out=document.createElement('canvas');
+  out.width=p.w; out.height=p.h;
+  var ctx=out.getContext('2d');
+
+  // Full-preset crop rectangle in base-canvas pixels
+  var fx0=(xlLon2x(b.lonMin,z)-base._x0)*XL_TILE;
+  var fx1=(xlLon2x(b.lonMax,z)-base._x0)*XL_TILE;
+  var fy0=(xlLat2y(b.latMax,z)-base._y0)*XL_TILE;
+  var fy1=(xlLat2y(b.latMin,z)-base._y0)*XL_TILE;
+  var cx0=fx0, cy0=fy0, cx1=fx1, cy1=fy1;
+
+  if(p.autoZoom&&pts&&pts.length){
+    var xs=[], ys=[];
+    pts.forEach(function(q){
+      var gx=(xlLon2x(q[1],z)-base._x0)*XL_TILE;
+      var gy=(xlLat2y(q[0],z)-base._y0)*XL_TILE;
+      if(gx>=fx0&&gx<=fx1&&gy>=fy0&&gy<=fy1){ xs.push(gx); ys.push(gy); }
+    });
+    if(xs.length){
+      xs.sort(function(a,c){ return a-c; });
+      ys.sort(function(a,c){ return a-c; });
+      var lo=0, hi=xs.length-1;
+      if(xs.length>=10){ lo=Math.floor(xs.length*0.03); hi=Math.ceil(xs.length*0.97)-1; }
+      var ax0=xs[lo], ax1=xs[hi], ay0=ys[lo], ay1=ys[hi];
+      var pad=Math.max(Math.max(ax1-ax0,ay1-ay0)*p.padPct, p.padMinPx);
+      ax0-=pad; ax1+=pad; ay0-=pad; ay1+=pad;
+      var side=Math.max(ax1-ax0, ay1-ay0, p.minSpanPx);
+      var mx=(ax0+ax1)/2, my=(ay0+ay1)/2;
+      ax0=mx-side/2; ax1=mx+side/2; ay0=my-side/2; ay1=my+side/2;
+      if(!(ax1-ax0>fx1-fx0 || ay1-ay0>fy1-fy0)){
+        if(ax0<fx0){ ax1+=fx0-ax0; ax0=fx0; }
+        if(ax1>fx1){ ax0-=ax1-fx1; ax1=fx1; }
+        if(ay0<fy0){ ay1+=fy0-ay0; ay0=fy0; }
+        if(ay1>fy1){ ay0-=ay1-fy1; ay1=fy1; }
+        cx0=Math.max(ax0,fx0); cx1=Math.min(ax1,fx1);
+        cy0=Math.max(ay0,fy0); cy1=Math.min(ay1,fy1);
+      }
+    }
+  }
+
+  var sw=cx1-cx0, sh=cy1-cy0;
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,p.w,p.h);
+  ctx.imageSmoothingEnabled=true;
+  if(ctx.imageSmoothingQuality) ctx.imageSmoothingQuality='high';
+  ctx.drawImage(base,cx0,cy0,sw,sh,0,0,p.w,p.h);
+
+  var zoomed=(sw<(fx1-fx0)-1);
+  ctx.fillStyle='rgba(200,50,35,0.72)';
+  var r=zoomed?(p.dot+0.6):p.dot;
+  pts.forEach(function(q){
+    var gx=(xlLon2x(q[1],z)-base._x0)*XL_TILE;
+    var gy=(xlLat2y(q[0],z)-base._y0)*XL_TILE;
+    var px=(gx-cx0)/sw*p.w, py=(gy-cy0)/sh*p.h;
+    if(px<0||py<0||px>p.w||py>p.h) return;
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+  });
+
+  if(zoomed){
+    ctx.fillStyle='rgba(255,255,255,0.82)';
+    ctx.fillRect(0,p.h-13,p.w,13);
+    ctx.fillStyle='#5a6b60';
+    ctx.font='8px sans-serif';
+    ctx.fillText('zoom \u00b7 '+pts.length+' citas',4,p.h-4);
+  }
+  ctx.strokeStyle='#d6dde1'; ctx.lineWidth=1; ctx.strokeRect(0.5,0.5,p.w-1,p.h-1);
+  try{ return out.toDataURL('image/jpeg',0.68); }catch(e){ return null; }
+}
+
 function xlPhotoVariants(url){
   var out=[];
   var swap=function(size){
@@ -1660,30 +1793,32 @@ function xlBorder(){
 }
 
 async function exportSpeciesExcel(species,taxonName,opts,statusFn){
-  var withMaps=opts&&opts.maps;
+  var mapMode=(opts&&opts.maps)||'none';       // 'none' | 'region' | 'global' | 'both'
+  var wantRegion=(mapMode==='region'||mapMode==='both');
+  var wantGlobal=(mapMode==='global'||mapMode==='both');
   var researchOnly=opts&&opts.research;
   await loadExcelJS();
+
   var placeId=null, placeName='';
-  if(withMaps){
+  if(wantRegion){
     var place=await xlResolvePlace();
     if(place){ placeId=place.id; placeName=place.name; }
+    if(!placeId) wantRegion=false;
   }
-  var bbox=XL_BBOX;
 
   if(researchOnly){
     statusFn('Verificando\u2026');
     var okIds=await xlResearchIds(spState.taxonId,activePlaceId||null,statusFn);
-    if(okIds.size){
-      species=species.filter(function(sp){ return okIds.has(sp.id); });
-    }
+    if(okIds.size) species=species.filter(function(sp){ return okIds.has(sp.id); });
     if(!species.length) throw new Error('Ninguna especie tiene observaciones verificadas.');
   }
 
   statusFn('Taxonom\u00eda\u2026');
   await xlEnrichTaxonomy(species,statusFn);
 
-  var base=null;
-  if(withMaps&&placeId){ statusFn('Mapa base\u2026'); base=await xlBuildBaseMap(bbox); }
+  var baseRegion=null, baseGlobal=null;
+  if(wantRegion){ statusFn('Mapa base\u2026'); baseRegion=await xlBuildBaseMap('region'); }
+  if(wantGlobal){ statusFn('Mapa mundial\u2026'); baseGlobal=await xlBuildBaseMap('global'); }
 
   var wb=new ExcelJS.Workbook();
   wb.creator='BioExplorer';
@@ -1703,12 +1838,13 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
     {header:'Nombre com\u00fan',key:'common',width:26},
     {header:'Foto',         key:'photo',    width:17}
   ];
-  if(withMaps) cols.push({header:'Distribuci\u00f3n',key:'map',width:17});
+  var colRegion=-1, colGlobal=-1;
+  if(wantRegion){ cols.push({header:(placeName||'Regional'),key:'mapR',width:17}); colRegion=cols.length-1; }
+  if(wantGlobal){ cols.push({header:'Distribuci\u00f3n global',key:'mapG',width:27}); colGlobal=cols.length-1; }
   ws.columns=cols;
   var nCols=cols.length;
   var lastCol=String.fromCharCode(64+nCols);
 
-  // Title row
   ws.spliceRows(1,0,[]);
   ws.mergeCells('A1:'+lastCol+'1');
   var title=ws.getCell('A1');
@@ -1719,7 +1855,6 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
   title.alignment={vertical:'middle',horizontal:'left',indent:1};
   ws.getRow(1).height=30;
 
-  // Header row
   var hdr=ws.getRow(2);
   hdr.height=22;
   hdr.eachCell(function(cell){
@@ -1744,7 +1879,7 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
       order:t.order||'', family:t.family||'', subfamily:t.subfamily||'',
       genus:t.genus||'', species:sp.name, common:sp.common||''
     });
-    row.height=withMaps?114:114;
+    row.height=114;
     var banded=(i%2===1);
     row.eachCell({includeEmpty:true},function(cell,colNumber){
       cell.border=xlBorder();
@@ -1753,7 +1888,6 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
       cell.font={name:'Calibri',size:10,color:{argb:'FF1F2A24'}};
       if(banded) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:XL_BAND}};
     });
-    // Scientific names in italic
     row.getCell(7).font={name:'Calibri',size:10,italic:true,color:{argb:'FF14532D'}};
     row.getCell(8).font={name:'Calibri',size:10,italic:true,bold:true,color:{argb:'FF14532D'}};
     row.getCell(9).font={name:'Calibri',size:10,color:{argb:'FF5A6B60'}};
@@ -1764,18 +1898,28 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
     var batch=sorted.slice(i,i+CONC);
     var results=await Promise.all(batch.map(async function(sp){
       var photo=await xlSpeciesPhoto(sp.photo);
-      var map=(withMaps&&base&&placeId)?await xlSpeciesMap(sp.id,placeId,base,bbox):null;
-      return {photo:photo,map:map};
+      var mapR=null, mapG=null;
+      if(wantRegion&&baseRegion){
+        mapR=xlRenderMap('region',baseRegion,await xlObsPoints(sp.id,placeId));
+      }
+      if(wantGlobal&&baseGlobal){
+        mapG=xlRenderMap('global',baseGlobal,await xlObsPoints(sp.id,null));
+      }
+      return {photo:photo,mapR:mapR,mapG:mapG};
     }));
     results.forEach(function(res,j){
-      var rowIdx=i+j+3;
+      var rowIdx=i+j+3, top=rowIdx-1+0.07;
       if(res.photo){
         var id1=wb.addImage({base64:xlB64(res.photo),extension:'jpeg'});
-        ws.addImage(id1,{tl:{col:9.12,row:rowIdx-1+0.07},ext:{width:106,height:106}});
+        ws.addImage(id1,{tl:{col:9.12,row:top},ext:{width:106,height:106}});
       }
-      if(res.map){
-        var id2=wb.addImage({base64:xlB64(res.map),extension:'jpeg'});
-        ws.addImage(id2,{tl:{col:10.12,row:rowIdx-1+0.07},ext:{width:106,height:106}});
+      if(res.mapR&&colRegion>=0){
+        var id2=wb.addImage({base64:xlB64(res.mapR),extension:'jpeg'});
+        ws.addImage(id2,{tl:{col:colRegion+0.12,row:top},ext:{width:106,height:106}});
+      }
+      if(res.mapG&&colGlobal>=0){
+        var id3=wb.addImage({base64:xlB64(res.mapG),extension:'jpeg'});
+        ws.addImage(id3,{tl:{col:colGlobal+0.12,row:top+0.09},ext:{width:180,height:100}});
       }
     });
     statusFn('Im\u00e1genes '+Math.min(i+CONC,sorted.length)+'/'+sorted.length);
@@ -1786,8 +1930,9 @@ async function exportSpeciesExcel(species,taxonName,opts,statusFn){
   var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
+  var suffix=(mapMode==='both')?'_mapas':(mapMode==='region')?'_regional':(mapMode==='global')?'_global':'';
   a.href=url;
-  a.download=String(taxonName||'especies').replace(/[^\w\-]+/g,'_')+(researchOnly?'_verificadas':'')+(withMaps?'_con_mapas':'')+'.xlsx';
+  a.download=String(taxonName||'especies').replace(/[^\w\-]+/g,'_')+(researchOnly?'_verificadas':'')+suffix+'.xlsx';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); },4000);
 }
@@ -1798,32 +1943,45 @@ function xlAskOptions(count){
     var ov=document.createElement('div');
     ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1200;display:flex;'
       +'align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(6px)';
+    var opt=function(id,label,note,primary){
+      return '<button id="'+id+'" style="width:100%;padding:11px 13px;margin-bottom:8px;text-align:left;'
+        +(primary?'background:var(--accent);color:#0d1117;border:none;font-weight:600;'
+                 :'background:var(--surface2);color:var(--text);border:1px solid var(--border);')
+        +'border-radius:8px;font-size:.83rem;cursor:pointer;font-family:inherit">'
+        +label+(note?'<span style="color:'+(primary?'rgba(13,17,23,.65)':'var(--dim)')
+        +';font-size:.72rem"> \u00b7 '+note+'</span>':'')+'</button>';
+    };
     ov.innerHTML='<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;'
-      +'padding:26px;max-width:390px;width:100%">'
+      +'padding:26px;max-width:400px;width:100%">'
       +'<div style="font-family:\'Fraunces\',serif;font-style:italic;font-size:1.2rem;margin-bottom:6px">Exportar a Excel</div>'
       +'<div style="color:var(--muted);font-size:.78rem;margin-bottom:16px;line-height:1.5">'
       +count+' especies cargadas.</div>'
-      +'<label style="display:flex;align-items:flex-start;gap:9px;padding:11px 12px;margin-bottom:14px;'
+      +'<label style="display:flex;align-items:flex-start;gap:9px;padding:11px 12px;margin-bottom:16px;'
       +'background:var(--surface2);border:1px solid var(--border);border-radius:9px;cursor:pointer">'
       +'<input type="checkbox" id="xlResearch" checked style="margin-top:2px;accent-color:var(--accent);cursor:pointer">'
       +'<span style="font-size:.76rem;line-height:1.45">Solo especies verificadas'
       +'<br><span style="color:var(--dim);font-size:.7rem">Descarta observaciones sin confirmar por la comunidad</span></span>'
       +'</label>'
-      +'<button id="xlWith" style="width:100%;padding:11px;margin-bottom:8px;background:var(--accent);'
-      +'color:#0d1117;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer">'
-      +'Con mapa de distribuci\u00f3n</button>'
-      +'<button id="xlWithout" style="width:100%;padding:11px;margin-bottom:8px;background:var(--surface2);'
-      +'color:var(--text);border:1px solid var(--border);border-radius:8px;font-size:.85rem;cursor:pointer">'
-      +'Solo foto <span style="color:var(--dim)">\u00b7 m\u00e1s r\u00e1pido</span></button>'
-      +'<button id="xlCancel" style="width:100%;padding:8px;background:none;border:none;'
-      +'color:var(--dim);font-size:.8rem;cursor:pointer">Cancelar</button>'
+      +'<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;letter-spacing:.09em;'
+      +'text-transform:uppercase;color:var(--dim);margin-bottom:8px">Mapas de distribuci\u00f3n</div>'
+      +opt('xlNone','Sin mapa','m\u00e1s r\u00e1pido',false)
+      +opt('xlRegion','Zona seleccionada','',true)
+      +opt('xlGlobal','Distribuci\u00f3n global','',false)
+      +opt('xlBoth','Ambos mapas','m\u00e1s lento',false)
+      +'<button id="xlCancel" style="width:100%;padding:8px;margin-top:6px;background:none;border:none;'
+      +'color:var(--dim);font-size:.8rem;cursor:pointer;font-family:inherit">Cancelar</button>'
       +'</div>';
-    var research=function(){ var c=ov.querySelector('#xlResearch'); return !!(c&&c.checked); };
-    var done=function(v){ if(ov.parentNode) document.body.removeChild(ov); resolve(v); };
-    ov.querySelector('#xlWith').addEventListener('click',function(){ done({maps:true,research:research()}); });
-    ov.querySelector('#xlWithout').addEventListener('click',function(){ done({maps:false,research:research()}); });
-    ov.querySelector('#xlCancel').addEventListener('click',function(){ done(null); });
-    ov.addEventListener('click',function(e){ if(e.target===ov) done(null); });
+    var pick=function(mode){
+      var research=ov.querySelector('#xlResearch').checked;
+      if(ov.parentNode) document.body.removeChild(ov);
+      resolve(mode?{maps:mode,research:research}:null);
+    };
+    ov.querySelector('#xlNone').addEventListener('click',function(){ pick('none'); });
+    ov.querySelector('#xlRegion').addEventListener('click',function(){ pick('region'); });
+    ov.querySelector('#xlGlobal').addEventListener('click',function(){ pick('global'); });
+    ov.querySelector('#xlBoth').addEventListener('click',function(){ pick('both'); });
+    ov.querySelector('#xlCancel').addEventListener('click',function(){ pick(null); });
+    ov.addEventListener('click',function(e){ if(e.target===ov) pick(null); });
     document.body.appendChild(ov);
   });
 }
